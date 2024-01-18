@@ -1,0 +1,7 @@
+psycopg2
+uvicorn
+fastapi
+bcrypt
+starlette
+sqlalchemy
+python
