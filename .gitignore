@@ -19,6 +19,9 @@ build/
 *.log
 db.sqlite3  # Ignore SQLite database files if used
 *.__pycache__/
+__pycache__/
+*.pyc
+app/__pycache__/
 
 # Ignore FastAPI auto-generated files
 api/.mypy_cache/
