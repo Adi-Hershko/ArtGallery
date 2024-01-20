@@ -1,16 +1,8 @@
 import psycopg2
 from sqlalchemy import create_engine, exc
 from sqlalchemy_utils import database_exists, create_database
-from app.DB.models import Base
-
-# Login info - temporary
-login_info = {
-    'username': 'postgres',
-    'password': '123456',
-    'host': 'localhost',
-    'port': '5432',
-    'db_name': 'ArtGallery'
-}
+from DB.models import Base
+from config import db_config
 
 def create_database_and_tables(username, password, host, port, db_name):
     # Connection string
@@ -35,4 +27,4 @@ def create_database_and_tables(username, password, host, port, db_name):
 
 # Directly runnable for testing
 if __name__ == "__main__":
-    create_database_and_tables(login_info['username'], login_info['password'], login_info['host'], login_info['port'], login_info['db_name'])
+    create_database_and_tables(db_config.username, db_config.password, db_config.host, db_config.port, db_config.database)

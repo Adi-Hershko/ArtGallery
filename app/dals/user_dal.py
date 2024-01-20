@@ -1,19 +1,18 @@
 from app.exceptions import UserNotFoundException
 from app.DB.db_operations import DatabaseOperations
-from kink import inject
 from ..DB.models import User
 
-@inject
-async def add_user(username, password, db_operations: DatabaseOperations) -> int:
+async def add_user(username, password) -> int:
         print("Insterting user...")
         try:
-            async with db_operations.get_session() as session:
+            db_operations = DatabaseOperations()
+            with db_operations.get_session() as session:
                 print("Adding user...")
-                new_user = User(username=username, password=password)
+                new_user = User(username=username, password=password, is_active=True)
                 print("New user: ", new_user)            
                 session.add(new_user)
                 print("User added.")
-                await session.commit()
+                session.commit()
 
             print(f"User '{username}' added successfully.")
             return 1
