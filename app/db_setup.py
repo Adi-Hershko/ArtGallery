@@ -1,7 +1,7 @@
 import psycopg2
 from sqlalchemy import create_engine, exc
 from sqlalchemy_utils import database_exists, create_database
-from .models import Base, User
+from app.DB.models import Base
 
 # Login info - temporary
 login_info = {
@@ -20,7 +20,7 @@ def create_database_and_tables(username, password, host, port, db_name):
     if not database_exists(db_url):
         try:
             create_database(db_url)
-            print(f"Database '{db_name}' created successfully.")
+            print(f"Database '{db_name}' created successfully.") # change to log later
         except exc.SQLAlchemyError as e:
             print(f"An error occurred while creating the database: {e}")
             return
