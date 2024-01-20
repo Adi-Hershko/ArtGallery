@@ -8,10 +8,10 @@ user_controller_router = APIRouter()
 @user_controller_router.post("/sign-up", tags=["Users"])
 async def sign_up(username: str, password: str) -> dict:
     rows_affected = create_user(username, password)
-    if rows_affected == 1:
-        return {"message": f"{username} has been signed up."}
-    else:
-        return {"message": "Something went wrong"}
+    if not rows_affected:
+        raise HTTPException(status_code=400, detail="Invalid request")
+    return {"message": f"{username} has been signed up."}
+            
 
 
 @user_controller_router.post("/sign-in", tags=["Users"])
