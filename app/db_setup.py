@@ -1,5 +1,5 @@
 import psycopg2
-from sqlalchemy import create_engine, exc
+from sqlalchemy import create_engine, exc, inspect
 from sqlalchemy_utils import database_exists, create_database
 from DB.models import Base
 from config import db_config
@@ -17,13 +17,22 @@ def create_database_and_tables(username, password, host, port, db_name):
             print(f"An error occurred while creating the database: {e}")
             return
 
-    # Connect to the database and create tables
+    # Connect to the database
     try:
         engine = create_engine(db_url)
-        Base.metadata.create_all(engine)
-        print("Tables created successfully.")
     except exc.SQLAlchemyError as e:
-        print(f"An error occurred while creating the tables: {e}")
+        print(f"An error occurred while connecting to the database: {e}")
+        return
+
+    # Check if tables already exist
+    inspector = inspect(engine)
+    tables = inspector.get_table_names()
+    if not set(Base.metadata.tables.keys()).issubset(set(tables)):
+        try:
+            Base.metadata.create_all(engine)
+            print("Tables created successfully.")
+        except exc.SQLAlchemyError as e:
+            print(f"An error occurred while creating the tables: {e}")
 
 # Directly runnable for testing
 if __name__ == "__main__":

@@ -26,19 +26,12 @@ async def find_user(username):
     try:
         db_operations = DatabaseOperations()
         with db_operations.get_session() as session:
-            print("locating user...")
+            print("Locating user...")
             user = session.query(User).filter(User.username == username).first()
-            if user is None:
-                return UserNotFoundException(f"User '{username}' not found.")            
-            print("User found: ", user)
+            print("User found: ", user) if user else print("User not found.")
+            session.close()
             return user
     except Exception as e:
         print(f"Error: {e}")
-        # Maybe return a DB exception here
+        # Handle or log the exception as needed
         return None
-        
-
-
-def delete_user(self, username):
-    pass
-    
