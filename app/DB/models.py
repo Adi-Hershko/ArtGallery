@@ -17,21 +17,14 @@ class User(Base):
 
 class Post(Base):
     __tablename__ = 'posts'
-
-    # UUID column
-    postId = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     
-    # String columns
+    postId = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     username = Column(String, ForeignKey('users.username'), nullable=False)
-    pathToImage = Column(String, nullable=False)
     title = Column(String, nullable=False)
     description = Column(String)
-
-    # DateTime column with automatic timestamp on insertion
-    insertionTime = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-
-    # Boolean column
+    pathToImage = Column(String, nullable=False)    
+    insertionTime = Column(DateTime(timezone=True), server_default=func.now())    
     isActive = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
-        return f"<Post(id='{self.id}', title='{self.title}', content='{self.content}', author='{self.author}')>"
+        return f"<Post(postId='{self.postId}', username='{self.username}', title='{self.title}', description='{self.description}', pathToImage='{self.pathToImage}', insertionTime='{self.insertionTime}', isActive='{self.isActive}')>"

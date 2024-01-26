@@ -1,4 +1,4 @@
-from app.exceptions import UserNotFoundException
+
 from app.DB.db_operations import DatabaseOperations
 from ..DB.models import User
 
@@ -32,6 +32,5 @@ async def find_user(username):
             session.close()
             return user
     except Exception as e:
-        print(f"Error: {e}")
-        # Handle or log the exception as needed
+        print(f"Error: {e}")        
         return None
