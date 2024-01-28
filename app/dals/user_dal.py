@@ -1,8 +1,8 @@
-
+from ..exceptions import OperationError
 from app.DB.db_operations import DatabaseOperations
 from ..DB.models import User
 
-async def add_user(username, password) -> int:
+async def add_user(username, password):
         print("Inserting user...")
         try:
             db_operations = DatabaseOperations()
@@ -14,14 +14,12 @@ async def add_user(username, password) -> int:
                 print("User added.")
                 session.commit()
                 session.close()
-
-            print(f"User '{username}' added successfully.")
-            return 1
+            print(f"User '{username}' added successfully.")            
         except Exception as e:
             print(f"Error: {e}")
-            return 0
+            raise OperationError("Error creating user.")
 
-async def find_user(username):
+async def find_user(username) -> User:
     print("Finding user...")
     try:
         db_operations = DatabaseOperations()
@@ -33,4 +31,4 @@ async def find_user(username):
             return user
     except Exception as e:
         print(f"Error: {e}")        
-        return None
+        raise OperationError("Error finding user.")

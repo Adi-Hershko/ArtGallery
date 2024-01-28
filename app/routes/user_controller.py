@@ -10,9 +10,7 @@ async def root() -> dict:
 
 @user_controller_router.post("/sign-up", tags=["Users"])
 async def sign_up(username: str, password: str) -> dict:
-    success = await create_user(username, password)    
-    if not success:
-        raise HTTPException(status_code=400, detail="Invalid request")
+    await create_user(username, password)    
     return {"message": f"{username} has been signed up."}    
             
 

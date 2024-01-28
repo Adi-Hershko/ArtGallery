@@ -1,24 +1,35 @@
-from app.exceptions import UserNotFoundException
+from app.exceptions import FeedNotFoundException, PostNotFoundException
 from app.DB.db_operations import DatabaseOperations
-from app.exceptions import PostNotFoundException
 from ..DB.models import Post
+from .queries_statement.query_params import posts_statement_by_name
 
-async def get_all_posts() -> list:
+
+async def get_all_posts(filters: dict) -> list:
     print("Getting all posts...")
     try:
         db_operations = DatabaseOperations()
         with db_operations.get_session() as session:
             print("Getting all posts...")
-            posts = session.query(Post).all()
+            query = session.query(Post)
+
+            for filter_name in filters.keys():
+                query = posts_statement_by_name[filter_name].append_join(query)
+            
+            for filter_name, condition in filters.items():
+                query = posts_statement_by_name[filter_name].append_where(query, condition)
+
+            print("Query: ", query)
+            posts = query.all()
+            
             print("Posts found: ", posts) if posts else print("Posts not found.")
             session.close()
             return posts
     except Exception as e:
         print(f"Error: {e}")        
-        return None
+        raise FeedNotFoundException("Feed not found.")
 
 
-async def add_post(username: str, title: str, description: str, pathToImage: str) -> int:
+async def add_post(username: str, title: str, description: str, pathToImage: str) -> Post:
     print("Inserting post...")
     try:
         db_operations = DatabaseOperations()
@@ -30,40 +41,9 @@ async def add_post(username: str, title: str, description: str, pathToImage: str
             print("Post added.")
             session.commit()
             session.close()
-
-        print(f"Post '{title}' added successfully.")
-        return 1
+            print(f"Post '{title}' added successfully.")
+            return new_post
     except Exception as e:
         print(f"Error: {e}")
-        return 0
+        raise PostNotFoundException("Post not found.")
     
-
-async def find_posts_by_title(title: str) -> Post:
-    print("Finding post...")
-    try:
-        db_operations = DatabaseOperations()
-        with db_operations.get_session() as session:
-            print("Locating post...")            
-            post = session.query(Post).filter(Post.title.ilike(f"%{title}%")).all()
-            print("Post found: ", post) if post else print("Post not found.")
-            session.close()
-            return post
-    except Exception as e:
-        print(f"Error: {e}")        
-        return None
-
-
-
-async def find_posts_by_username(username: str):
-    print("Finding post...")
-    try:
-        db_operations = DatabaseOperations()
-        with db_operations.get_session() as session:
-            print("Locating post...")
-            post = session.query(Post).filter(Post.username == username).all()
-            print("Post found: ", post) if post else print("Post not found.")
-            session.close()
-            return post
-    except Exception as e:
-        print(f"Error: {e}")        
-        return None

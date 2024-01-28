@@ -9,3 +9,6 @@ class PostNotFoundException(Exception):
 
 class FeedNotFoundException(Exception):
     pass
+
+class OperationError(Exception):
+    pass

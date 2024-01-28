@@ -30,3 +30,9 @@ async def feed_not_found_exception_handler(request, exc: FeedNotFoundException):
         status_code=404,
         content={"message": "Feed not found"}
     )
+
+async def operation_error_exception_handler(request, exc: OperationError):
+    return JSONResponse(
+        status_code=500,
+        content={"message": "Operation error"}
+    )
