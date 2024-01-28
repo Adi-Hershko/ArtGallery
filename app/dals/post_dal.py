@@ -1,4 +1,4 @@
-from app.exceptions import FeedNotFoundException, PostNotFoundException
+from app.exceptions import OperationError
 from app.DB.db_operations import DatabaseOperations
 from ..DB.models import Post
 from .queries_statement.query_params import posts_statement_by_name
@@ -26,10 +26,10 @@ async def get_all_posts(filters: dict) -> list:
             return posts
     except Exception as e:
         print(f"Error: {e}")        
-        raise FeedNotFoundException("Feed not found.")
+        raise OperationError("Operation error.")
 
 
-async def add_post(username: str, title: str, description: str, pathToImage: str) -> Post:
+async def add_post(username: str, title: str, description: str, pathToImage: str):
     print("Inserting post...")
     try:
         db_operations = DatabaseOperations()
@@ -41,9 +41,8 @@ async def add_post(username: str, title: str, description: str, pathToImage: str
             print("Post added.")
             session.commit()
             session.close()
-            print(f"Post '{title}' added successfully.")
-            return new_post
+            print(f"Post '{title}' added successfully.")            
     except Exception as e:
         print(f"Error: {e}")
-        raise PostNotFoundException("Post not found.")
+        raise OperationError("Operation error.")
     
