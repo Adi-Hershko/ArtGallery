@@ -10,8 +10,8 @@ async def root() -> dict:
 
 @user_controller_router.post("/sign-up", tags=["Users"])
 async def sign_up(username: str, password: str) -> dict:
-    await create_user(username, password)    
-    return {"message": f"{username} has been signed up."}    
+    await create_user(username, password)
+    return {"message": f"{username} has been signed up."}
             
 
 @user_controller_router.post("/sign-in", tags=["Users"])

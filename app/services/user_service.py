@@ -11,12 +11,10 @@ async def create_user(username:str, password:str):
         print(f"Error: {e}")
         raise OperationError("Error creating user.")
 
-async def validate_user(username: str, password: str) -> bool:
+async def validate_user(username: str, password: str):
     user = await find_user(username)
     if user is None:
         raise UserNotFoundException("User not found.")
 
     if not bcrypt.checkpw(password.encode("utf-8"), user.password):
         raise PasswordNotMatchException("Password does not match.")
-
-    return True

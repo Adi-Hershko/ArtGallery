@@ -1,7 +1,8 @@
-from app.exceptions import OperationError
+from app.exceptions import OperationError, PostNotFoundException
 from app.DB.db_operations import DatabaseOperations
 from ..DB.models import Post
 from .queries_statement.query_params import posts_statement_by_name
+from uuid import UUID
 
 
 async def get_all_posts(filters: dict) -> list:
@@ -10,7 +11,7 @@ async def get_all_posts(filters: dict) -> list:
         db_operations = DatabaseOperations()
         with db_operations.get_session() as session:
             print("Getting all posts...")
-            query = session.query(Post)
+            query = session.query(Post).filter(Post.isActive == True)
 
             for filter_name in filters.keys():
                 query = posts_statement_by_name[filter_name].append_join(query)
@@ -46,3 +47,19 @@ async def add_post(username: str, title: str, description: str, pathToImage: str
         print(f"Error: {e}")
         raise OperationError("Operation error.")
     
+
+async def update_post_in_db(postId: UUID, updates: dict):
+    print("Updating post...")
+    try:
+        db_operations = DatabaseOperations()
+        with db_operations.get_session() as session:
+            print("Updating post...")
+            query = session.query(Post).filter(Post.postId == postId)
+            print("Query: ", query)
+            query.update(updates)
+            session.commit()
+            session.close()
+            print(f"Post '{postId}' updated successfully.")
+    except Exception as e:
+        print(f"Error: {e}")
+        raise OperationError("Operation error.")

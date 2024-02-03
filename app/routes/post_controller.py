@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from typing import Optional
-from app.services.post_service import get_feed, create_post
+from app.services.post_service import get_feed, create_post, filter_updates
+from uuid import UUID
 
 post_controller_router = APIRouter()
 
@@ -16,8 +17,13 @@ async def upload_post(username: str, title: str, description: str, pathToImage: 
     return {"message": f"{title} has been uploaded."}
 
 
-#TODO: Add a route to delete a post
+@post_controller_router.delete("/delete-post", tags=["Posts"])
+async def delete_post(postId: UUID):
+    await filter_updates(postId, {"isActive": False})
+    return {"message": f"Post {postId} has been deleted."}
 
 
-#TODO: Add a route to update a post
-
+@post_controller_router.put("/update-post", tags=["Posts"])
+async def update_post(postId: UUID, title: Optional[str] = None, description: Optional[str] = None, pathToImage: Optional[str] = None):
+    await filter_updates(postId, {"title": title, "description": description, "pathToImage": pathToImage})
+    return {"message": f"Post {postId} has been updated."}
