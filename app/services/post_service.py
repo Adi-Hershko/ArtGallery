@@ -1,22 +1,26 @@
-from app.dals.post_dal import add_post, get_all_posts, update_post_in_db
+from app.dals.post_dal import *
 from app.dals.user_dal import find_user
 from app.exceptions import UserNotFoundException
-from uuid import UUID
+from ..pydantic_models.post_models.post_request_model import *
+from ..pydantic_models.user_models.user_request_model import UserSearchRequestModel
 
-async def get_feed(filters: dict = dict()):
-    filtered_dict = {parameter: condition for parameter, condition in filters.items() if condition is not None}
-    return await get_all_posts(filtered_dict)
+async def get_feed(feedReqs: PostFeedRequestModel):
+    return await get_all_posts(feedReqs)
 
-async def create_post(username: str, title: str, description: str, pathToImage: str):
-    user = await find_user(username)
+async def create_post(post: PostUploadRequestModel):
+    user = await find_user(UserSearchRequestModel(username=post.username))
     if user is None:
         raise UserNotFoundException("User not found.")
-    await add_post(username, title, description, pathToImage)    
+    print("User found", user)
+    await add_post(post)
 
-async def filter_updates(postId: UUID, updates: dict):
-    filtered_dict = {parameter: condition for parameter, condition in updates.items() if condition is not None}
-    if not filtered_dict:
-        return
-    print("Filtering updates: ", filtered_dict)
-    await update_post_in_db(postId, filtered_dict)
+async def find_post_and_delete(post: PostIdSearchRequestModel):
+    is_deleted = await delete_post_in_db(post)
+    if is_deleted is False:
+        raise PostNotFoundException("Post not found.")
+    print(f"Post {post.postId} has been set inactive.")
 
+async def find_post_and_update(post: PostUpdateRequestModel):
+    rows_affected = await update_post_in_db(post)
+    if rows_affected == 0:
+        raise PostNotFoundException("Post not found.")

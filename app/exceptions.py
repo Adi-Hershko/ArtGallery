@@ -12,3 +12,6 @@ class FeedNotFoundException(Exception):
 
 class OperationError(Exception):
     pass
+
+class UserAlreadyExist(Exception):
+    pass

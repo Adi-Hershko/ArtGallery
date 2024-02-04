@@ -1,5 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends
 from app.services.user_service import create_user, validate_user
+from ..pydantic_models.user_models.user_request_model import UserBaseRequestModel
+from ..pydantic_models.user_models.user_response_model import UserBaseResponseModel
+
 
 user_controller_router = APIRouter()
 
@@ -9,12 +12,12 @@ async def root() -> dict:
 
 
 @user_controller_router.post("/sign-up", tags=["Users"])
-async def sign_up(username: str, password: str) -> dict:
-    await create_user(username, password)
-    return {"message": f"{username} has been signed up."}
+async def sign_up(user: UserBaseRequestModel = Depends(UserBaseRequestModel)) -> dict:
+    await create_user(user)
+    return {"message": f"{user.username} has been signed up."}
             
 
 @user_controller_router.post("/sign-in", tags=["Users"])
-async def sign_in(username: str, password: str) -> dict:
-    await validate_user(username, password)
-    return {"message": f"{username} has been signed in."}
+async def sign_in(user: UserBaseRequestModel = Depends(UserBaseRequestModel)) -> UserBaseResponseModel:
+    return await validate_user(user)
+    

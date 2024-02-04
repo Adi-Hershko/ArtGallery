@@ -1,34 +1,42 @@
-from ..exceptions import OperationError
+from ..exceptions import OperationError, UserAlreadyExist
 from app.DB.db_operations import DatabaseOperations
+from sqlalchemy.exc import IntegrityError
+from psycopg2.errors import UniqueViolation
 from ..DB.models import User
+from ..pydantic_models.user_models.user_request_model import UserBaseRequestModel, UserInternalRequestModel
+from ..pydantic_models.user_models.user_response_model import UserBaseResponseModel, UserInternalResponseModel
 
-async def add_user(username, password):
+async def add_user(user: UserInternalRequestModel) -> None:
         print("Inserting user...")
         try:
             db_operations = DatabaseOperations()
             with db_operations.get_session() as session:
                 print("Adding user...")
-                new_user = User(username=username, password=password, is_active=True)
+                new_user = User(username=user.username, password=user.password, is_active=True)
                 print("New user: ", new_user)            
                 session.add(new_user)
-                print("User added.")
                 session.commit()
+                print("User added.")
                 session.close()
-            print(f"User '{username}' added successfully.")            
+            print(f"User '{user.username}' added successfully.")
+        except IntegrityError as exc:
+            if isinstance(exc.orig, UniqueViolation):
+                print(f"Error: User with username '{user.username}' already exists.")
+                raise UserAlreadyExist("User already exists.")
         except Exception as e:
             print(f"Error: {e}")
             raise OperationError("Error creating user.")
 
-async def find_user(username) -> User:
+async def find_user(user: UserBaseRequestModel) -> UserInternalResponseModel:
     print("Finding user...")
     try:
         db_operations = DatabaseOperations()
         with db_operations.get_session() as session:
             print("Locating user...")
-            user = session.query(User).filter(User.username == username).first()
-            print("User found: ", user) if user else print("User not found.")
+            query_result = session.query(User).filter(User.username == user.username).first()
+            print("User found: ", query_result) if query_result else print("User not found.")
             session.close()
-            return user
+            return UserInternalResponseModel(username=query_result.username, password=query_result.password) if query_result else None
     except Exception as e:
         print(f"Error: {e}")        
         raise OperationError("Error finding user.")

@@ -12,6 +12,8 @@ app.add_exception_handler(Exception, default_exception_handler)
 app.add_exception_handler(PostNotFoundException, post_not_found_exception_handler)
 app.add_exception_handler(FeedNotFoundException, feed_not_found_exception_handler)
 app.add_exception_handler(OperationError, operation_error_exception_handler)
+app.add_exception_handler(UserAlreadyExist, user_already_exist_exception_handler)
 
 app.include_router(user_controller_router)
 app.include_router(post_controller_router)
+

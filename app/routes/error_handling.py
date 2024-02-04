@@ -36,3 +36,9 @@ async def operation_error_exception_handler(request, exc: OperationError):
         status_code=500,
         content={"message": "Operation error"}
     )
+
+async def user_already_exist_exception_handler(request, exc: UserAlreadyExist):
+    return JSONResponse(
+        status_code=409,
+        content={"message": "User already exists"}
+    )
