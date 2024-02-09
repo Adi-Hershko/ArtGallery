@@ -3,6 +3,7 @@ from typing import Optional
 from datetime import datetime
 from uuid import UUID
 
+
 class PostGetResponseModel(BaseModel):
     postId: UUID = Field(..., description="The id of the post")
     username: str = Field(..., min_length=3, max_length=50)
@@ -14,7 +15,6 @@ class PostGetResponseModel(BaseModel):
     )
     pathToImage: str = Field(..., min_length=3, max_length=300)
     insertionTime: datetime = Field(..., description="The time the post was inserted.")
-    isActive: bool = Field(..., description="Whether the post is active or not.")
 
     class Config:
         orm_mode = True

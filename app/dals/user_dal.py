@@ -1,23 +1,22 @@
+from kink import di
 from app.exceptions import OperationError, UserAlreadyExist
 from app.DB.db_operations import DatabaseOperations
 from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
 from app.DB.models import User
 
+db_operations = di[DatabaseOperations]
+
 
 async def add_user(user: User) -> None:
         print("Inserting user...")
         try:
-            db_operations = DatabaseOperations()
             with db_operations.get_session() as session:
                 print("Adding user...")
-                new_user = User(username=user.username, password=user.password, is_active=True)
-                print("New user: ", new_user)            
-                session.add(new_user)
+                print("New user: ", user)
+                session.add(user)
                 session.commit()
                 print("User added.")
-                session.close()
-            print(f"User '{user.username}' added successfully.")
         except IntegrityError as exc:
             if isinstance(exc.orig, UniqueViolation):
                 print(f"Error: User with username '{user.username}' already exists.")
@@ -30,13 +29,11 @@ async def add_user(user: User) -> None:
 async def find_user(username: str) -> User:
     print("Finding user...")
     try:
-        db_operations = DatabaseOperations()
         with db_operations.get_session() as session:
             print("Locating user...")
             query_result = session.query(User).filter(User.username == username).first()
             print("User found: ", query_result) if query_result else print("User not found.")
-            session.close()
             return User(username=query_result.username, password=query_result.password) if query_result else None
     except Exception as e:
-        print(f"Error: {e}")        
+        print(f"Error: {e}")
         raise OperationError("Error finding user.")

@@ -80,3 +80,11 @@ class PostUpdateRequestModel(BaseModel):
                 "pathToImage": "https://www.example.com/image.jpg"
             }
         }
+
+    def convert_to_dict(self):
+        return {
+            "postId": self.postId,
+            "title": self.title,
+            "description": self.description,
+            "pathToImage": self.pathToImage,
+        }
