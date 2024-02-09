@@ -1,12 +1,11 @@
-from ..exceptions import OperationError, UserAlreadyExist
+from app.exceptions import OperationError, UserAlreadyExist
 from app.DB.db_operations import DatabaseOperations
 from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
-from ..DB.models import User
-from ..pydantic_models.user_models.user_request_model import UserBaseRequestModel, UserInternalRequestModel
-from ..pydantic_models.user_models.user_response_model import UserBaseResponseModel, UserInternalResponseModel
+from app.DB.models import User
 
-async def add_user(user: UserInternalRequestModel) -> None:
+
+async def add_user(user: User) -> None:
         print("Inserting user...")
         try:
             db_operations = DatabaseOperations()
@@ -27,16 +26,17 @@ async def add_user(user: UserInternalRequestModel) -> None:
             print(f"Error: {e}")
             raise OperationError("Error creating user.")
 
-async def find_user(user: UserBaseRequestModel) -> UserInternalResponseModel:
+
+async def find_user(username: str) -> User:
     print("Finding user...")
     try:
         db_operations = DatabaseOperations()
         with db_operations.get_session() as session:
             print("Locating user...")
-            query_result = session.query(User).filter(User.username == user.username).first()
+            query_result = session.query(User).filter(User.username == username).first()
             print("User found: ", query_result) if query_result else print("User not found.")
             session.close()
-            return UserInternalResponseModel(username=query_result.username, password=query_result.password) if query_result else None
+            return User(username=query_result.username, password=query_result.password) if query_result else None
     except Exception as e:
         print(f"Error: {e}")        
         raise OperationError("Error finding user.")

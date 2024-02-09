@@ -52,6 +52,12 @@ class PostFeedRequestModel(BaseModel):
             }
         }
 
+    def convert_to_dict(self):
+        return {
+            "username": self.username,
+            "title": self.title
+        }
+
 
 class PostUpdateRequestModel(BaseModel):
     postId: UUID = Field(..., description="The id of the post")
