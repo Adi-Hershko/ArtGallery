@@ -4,5 +4,6 @@ fastapi
 bcrypt
 starlette
 sqlalchemy
-python
 kink
+sqlalchemy_utils
+python-dotenv
