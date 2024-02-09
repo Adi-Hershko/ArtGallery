@@ -11,7 +11,6 @@ async def get_all_posts(feedReqs: PostFeedRequestModel) -> list[PostGetResponseM
     print("Getting all posts...")
     posts_response_list = []
     try:
-        db_operations = DatabaseOperations()
         with db_operations.get_session() as session:
             print("Getting all posts...")
             query = session.query(Post).filter(Post.isActive == True)
@@ -43,7 +42,6 @@ async def get_all_posts(feedReqs: PostFeedRequestModel) -> list[PostGetResponseM
 async def add_post(post: PostUploadRequestModel):
     print("Inserting post...")
     try:
-        db_operations = DatabaseOperations()
         with db_operations.get_session() as session:
             print("Adding post...")
             new_post = Post(username=post.username, title=post.title, description=post.description, pathToImage=post.pathToImage)
@@ -60,7 +58,6 @@ async def add_post(post: PostUploadRequestModel):
     
 async def delete_post_in_db(post: PostIdSearchRequestModel) -> bool:
     try:
-        db_operations = DatabaseOperations()
         with db_operations.get_session() as session:
             print("Deleting post...")
             result = session.query(Post).filter(Post.postId == post.postId).first()        
@@ -80,7 +77,6 @@ async def delete_post_in_db(post: PostIdSearchRequestModel) -> bool:
 async def update_post_in_db(post: PostUpdateRequestModel) -> int:
     updates = {}
     try:
-        db_operations = DatabaseOperations()
         with db_operations.get_session() as session:
             print("Updating post...")
             for key, value in post.__dict__.items():
