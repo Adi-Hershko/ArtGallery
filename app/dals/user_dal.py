@@ -10,20 +10,21 @@ db_operations = di[DatabaseOperations]
 
 async def add_user(user: User) -> None:
         print("Inserting user...")
-        try:
-            with db_operations.get_session() as session:
-                print("Adding user...")
-                print("New user: ", user)
-                session.add(user)
+        with db_operations.get_session() as session:
+            print("Adding user...")
+            print("New user: ", user)
+            session.add(user)
+
+            try:
                 session.commit()
                 print("User added.")
-        except IntegrityError as exc:
-            if isinstance(exc.orig, UniqueViolation):
-                print(f"Error: User with username '{user.username}' already exists.")
-                raise UserAlreadyExist("User already exists.")
-        except Exception as e:
-            print(f"Error: {e}")
-            raise OperationError("Error creating user.")
+            except IntegrityError as exc:
+                if isinstance(exc.orig, UniqueViolation):
+                    print(f"Error: User with username '{user.username}' already exists.")
+                    raise UserAlreadyExist("User already exists.")
+            except Exception as e:
+                print(f"Error: {e}")
+                raise OperationError("Error creating user.")
 
 
 async def find_user(username: str) -> User:
