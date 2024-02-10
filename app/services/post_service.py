@@ -24,8 +24,7 @@ async def get_feed(feed_reqs: PostFeedRequestModel):
 async def create_post(post: PostUploadRequestModel):
     user = await find_user(post.username)
     if user is None:
-        raise UserNotFoundException("User not found.")
-    print("User found", user)
+        raise UserNotFoundException("User not found.")    
     await add_post(
         Post(username=post.username, title=post.title, description=post.description, pathToImage=post.pathToImage)
     )

@@ -1,4 +1,5 @@
 import bcrypt
+import inspect
 from app.dals.user_dal import add_user, find_user
 from app.exceptions import UserNotFoundException, PasswordNotMatchException, OperationError, UserAlreadyExist
 from ..DB.models import User
@@ -14,8 +15,10 @@ async def create_user(user: UserBaseRequestModel) -> None:
     except UserAlreadyExist:
         raise
     except Exception as e:
-        print(f"Error: {e}")
-        raise OperationError("Error creating user.")
+        module_name = __name__
+        function_name = inspect.currentframe().f_code.co_name
+        print(f"Error in {module_name}.{function_name}: Error: {e}")
+        raise OperationError("Operation error.")
 
 
 async def validate_user(user: UserBaseRequestModel) -> UserBaseResponseModel:
