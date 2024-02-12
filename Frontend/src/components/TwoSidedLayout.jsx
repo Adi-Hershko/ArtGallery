@@ -4,7 +4,7 @@ import Box from '@mui/joy/Box';
 import Container from '@mui/joy/Container';
 import { typographyClasses } from '@mui/joy/Typography';
 
-export default function TwoSidedLayout({ children, reversed }) {
+export default function TwoSidedLayout({ children, reversed , imgSrc}) {
   return (
     <Container
       sx={(theme) => ({
@@ -34,7 +34,7 @@ export default function TwoSidedLayout({ children, reversed }) {
           textAlign: 'center',
           flexShrink: 999,
           [theme.breakpoints.up(834)]: {
-            minWidth: 420,
+            minWidth: 460,
             alignItems: 'flex-start',
             textAlign: 'initial',
           },
@@ -55,7 +55,7 @@ export default function TwoSidedLayout({ children, reversed }) {
           [theme.breakpoints.up(834)]: {
             alignSelf: 'initial',
             flexGrow: 1,
-            '--AspectRatio-maxHeight': '520px',
+            '--AspectRatio-maxHeight': '550px',
             '--AspectRatio-minHeight': '400px',
           },
           borderRadius: 'sm',
@@ -64,8 +64,8 @@ export default function TwoSidedLayout({ children, reversed }) {
         })}
       >
         <img
-          src="https://images.unsplash.com/photo-1483791424735-e9ad0209eea2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"
-          alt=""
+          src={imgSrc}
+          alt="ArtGalleryApp"
         />
       </AspectRatio>
     </Container>
