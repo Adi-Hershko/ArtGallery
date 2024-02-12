@@ -50,10 +50,9 @@ function SignUpPage() {
     event.preventDefault();    
     if (!formErrors.username && !formErrors.password) {
       try {                
-        const base_url = import.meta.env.VITE_BASE_URL;
-        const api_url = `${base_url}/sign-up`;
-        const res = await axios.post(api_url, formFields);
-        console.log(res);
+        const base_url = import.meta.env.VITE_BASE_URL;        
+        const api_url = `${base_url}/sign-up`;        
+        const res = await axios.post(api_url, formFields);        
         toast.success(res.data.message, {
           position: "bottom-left",
           autoClose: 2000,

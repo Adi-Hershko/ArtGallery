@@ -1,20 +1,32 @@
 import React, { useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import {createBrowserRouter,RouterProvider} from 'react-router-dom'
+import SignInPage from './pages/SignInPage'
+import SignUpPage from './pages/SignUpPage'
+import HomePage from './pages/HomePage.jsx'
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <HomePage />,
+  },
+  {
+    path:"/sign-in",
+    element:<SignInPage/>
+  },
+  {
+    path:"/sign-up",
+    element:<SignUpPage/>
+  },
+]);
 
 
-function App() {
 
-  const navigate = useNavigate();
-
+function App() {  
 
   return (
-    <div>
-      <h1>Art Gallery</h1>
-      <h2>Press either one to check</h2>
-      <button onClick={() => navigate('/sign-in')}>Sign in</button>
-      <button onClick={() => navigate('/sign-up')}>Sign up</button>
-    </div>
+    <RouterProvider router={router}/>
   )
 }
 

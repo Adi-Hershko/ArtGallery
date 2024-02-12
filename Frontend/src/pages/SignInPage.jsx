@@ -49,8 +49,7 @@ function SignInPage() {
       try {        
         const base_url = import.meta.env.VITE_BASE_URL;
         const api_url = `${base_url}/sign-in`;
-        const res = await axios.post(api_url, formFields);
-        console.log(res.data.username);
+        const res = await axios.post(api_url, formFields);        
         toast.success("Welcome, " + res.data.username, {
           position: "bottom-left",
           autoClose: 2000,
@@ -82,36 +81,36 @@ function SignInPage() {
   };
 
   return (
-      <Grid container component="main" sx={{ height: '100vh' }}>
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
+    <Grid container component="main" sx={{ height: '100vh' }}>
+          <Grid
+        item
+        xs={false}
+        sm={4}
+        md={7}
+        sx={{
+          backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: (t) =>
+            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
+      <CssBaseline />
+      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <Box
           sx={{
-            backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            my: 8,
+            mx: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
-        />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <Box
-            sx={{
-              my: 8,
-              mx: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+        >
+          <Typography component="h1" variant="h5">
+            Sign In
+          </Typography>
+          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -146,32 +145,19 @@ function SignInPage() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Register
             </Button>
-              <Grid container justifyContent={'center'}>
-                <Grid item>
-                  <Link href="sign-up" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
+            <Grid container justifyContent="center">
+              <Grid item>
+                <Link href="sign-up" variant="body2">
+                  {"Don't have an account? Sign up"}
+                </Link>
               </Grid>
-            </Box>
+            </Grid>
           </Box>
-        </Grid>
-        <Grid
-        item
-        xs={false}
-        sm={4}
-        md={7}
-        sx={{
-          backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
-          backgroundRepeat: 'no-repeat',
-          backgroundColor: (t) =>
-            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
+        </Box>
+      </Grid>
+
       <ToastContainer
         position="bottom-left"
         autoClose={2000}
@@ -184,8 +170,7 @@ function SignInPage() {
         theme="light"
         transition={Bounce}
       />
-      </Grid>
-      
+    </Grid>
   );
 }
 
