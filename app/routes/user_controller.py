@@ -11,13 +11,14 @@ async def root() -> dict:
     return {"message": "Welcome to Art Gallery!"}
 
 
+# async def sign_up(user: UserBaseRequestModel = Depends(UserBaseRequestModel)) -> dict:
 @user_controller_router.post("/sign-up", tags=["Users"])
-async def sign_up(user: UserBaseRequestModel = Depends(UserBaseRequestModel)) -> dict:
+async def sign_up(user: UserBaseRequestModel) -> dict:
     await create_user(user)
     return {"message": f"{user.username} has been signed up."}
             
 
 @user_controller_router.post("/sign-in", tags=["Users"])
-async def sign_in(user: UserBaseRequestModel = Depends(UserBaseRequestModel)) -> UserBaseResponseModel:
+async def sign_in(user: UserBaseRequestModel) -> UserBaseResponseModel:
     return await validate_user(user)
     

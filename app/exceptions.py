@@ -15,3 +15,15 @@ class OperationError(Exception):
 
 class UserAlreadyExist(Exception):
     pass
+
+class PasswordTooShort(Exception):
+    pass
+
+class PasswordTooLong(Exception):
+    pass
+
+class UsernameTooShort(Exception):
+    pass
+
+class UsernameTooLong(Exception):
+    pass

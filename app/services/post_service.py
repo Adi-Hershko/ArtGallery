@@ -33,8 +33,7 @@ async def create_post(post: PostUploadRequestModel):
 async def find_post_and_delete(post: PostIdSearchRequestModel):
     is_deleted = await delete_post_in_db(post.postId)
     if is_deleted is False:
-        raise PostNotFoundException("Post not found.")
-    print(f"Post {post.postId} has been set inactive.")
+        raise PostNotFoundException("Post not found.")    
 
 
 async def find_post_and_update(post: PostUpdateRequestModel):

@@ -1,5 +1,4 @@
 from fastapi import Request, Depends
-
 from app.exceptions import UserNotFoundException
 
 

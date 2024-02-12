@@ -80,8 +80,6 @@ async def delete_post_in_db(post_id: UUID) -> bool:
 async def update_post_in_db(post_id: UUID, updates: dict) -> int:    
     with db_operations.get_session() as session:
         print("Updating post...")
-        for key, value in updates.items():
-            updates[key] = value
 
         result = session.query(Post).filter(Post.postId == post_id)
         try:
