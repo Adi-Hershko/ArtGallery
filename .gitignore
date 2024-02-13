@@ -7,8 +7,6 @@ venv/
 .env
 .vscode/
 volume/
-# Ignore generated files and directories
-__init__.py
 __pycache__/
 app/__pycache__
 *.pyc

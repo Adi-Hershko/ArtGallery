@@ -8,9 +8,9 @@ from Backend.app.routes.user_controller import user_controller_router
 from Backend.app.routes.post_controller import post_controller_router
 from Backend.app.routes.error_handling import *
 from Backend.app.config.config import origins
+from Backend.app import logger
 
 app = FastAPI()
-
 
 app.add_middleware(
     CORSMiddleware,
