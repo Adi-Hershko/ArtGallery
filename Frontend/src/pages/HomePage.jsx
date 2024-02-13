@@ -11,7 +11,7 @@ import TwoSidedLayout from '../components/TwoSidedLayout';
 
 export default function HomePage() {
   return (
-    <TwoSidedLayout imgSrc="tomer.jpg">
+    <TwoSidedLayout imgSrc="HeroPageLogo.webp">
       <Typography color="primary" fontSize="lg" fontWeight="lg">
         Discover the Art of Tomorrow
       </Typography>

@@ -145,7 +145,7 @@ function SignInPage() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Register
+              Sign In
             </Button>
             <Grid container justifyContent="center">
               <Grid item>
