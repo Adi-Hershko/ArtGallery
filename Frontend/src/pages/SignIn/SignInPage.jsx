@@ -1,25 +1,23 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Bounce, ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate} from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { useNavigate } from 'react-router-dom';
+import { Bounce, ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
+import 'react-toastify/dist/ReactToastify.css';
 
 
-function SignUpPage() {
 
-
+function SignInPage() {
 
   const navigate = useNavigate();
 
@@ -47,13 +45,13 @@ function SignUpPage() {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();    
+    event.preventDefault();
     if (!formErrors.username && !formErrors.password) {
-      try {                
-        const base_url = import.meta.env.VITE_BASE_URL;        
-        const api_url = `${base_url}/sign-up`;        
+      try {        
+        const base_url = import.meta.env.VITE_BASE_URL;
+        const api_url = `${base_url}/sign-in`;
         const res = await axios.post(api_url, formFields);        
-        toast.success(res.data.message, {
+        toast.success("Welcome, " + res.data.username, {
           position: "bottom-left",
           autoClose: 2000,
           hideProgressBar: false,
@@ -65,10 +63,10 @@ function SignUpPage() {
           transition: Bounce,
         });
         setTimeout(() => {
-          navigate('/sign-in');
+          // navigate('/signin');          
         }, 3000);
-      } catch (error) {
-        toast.error(error.response.data.message, {
+      } catch (error) {        
+        toast.error(error.response.data.message + ", check your credentials.", {
           position: "bottom-left",
           autoClose: 2000,
           hideProgressBar: false,
@@ -85,6 +83,20 @@ function SignUpPage() {
 
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>
+          <Grid
+        item
+        xs={false}
+        sm={4}
+        md={7}
+        sx={{
+          backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: (t) =>
+            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
       <CssBaseline />
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <Box
@@ -97,7 +109,7 @@ function SignUpPage() {
           }}
         >
           <Typography component="h1" variant="h5">
-            Sign Up
+            Sign In
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
@@ -134,32 +146,19 @@ function SignUpPage() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Register
+              Sign In
             </Button>
             <Grid container justifyContent="center">
               <Grid item>
-                <Link href="sign-in" variant="body2">
-                  {"Already have an account? Sign In"}
+                <Link href="sign-up" variant="body2">
+                  {"Don't have an account? Sign up"}
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
       </Grid>
-      <Grid
-        item
-        xs={false}
-        sm={4}
-        md={7}
-        sx={{
-          backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
-          backgroundRepeat: 'no-repeat',
-          backgroundColor: (t) =>
-            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
+
       <ToastContainer
         position="bottom-left"
         autoClose={2000}
@@ -176,4 +175,4 @@ function SignUpPage() {
   );
 }
 
-export default SignUpPage;
+export default SignInPage;

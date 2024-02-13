@@ -11,3 +11,6 @@ db_config = DbConfig(
     port=int(os.getenv("DB_PORT")),
     database=os.getenv("DB_NAME")
 )
+
+env = os.getenv("ENV", "dev")
+origins = os.getenv("ORIGINS", ["*"] if env == "dev" else [])

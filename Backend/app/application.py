@@ -7,12 +7,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from Backend.app.routes.user_controller import user_controller_router
 from Backend.app.routes.post_controller import post_controller_router
 from Backend.app.routes.error_handling import *
+from Backend.app.config.config import origins
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:5173"
-]
 
 app.add_middleware(
     CORSMiddleware,
