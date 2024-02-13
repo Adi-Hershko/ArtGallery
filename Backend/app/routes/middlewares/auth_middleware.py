@@ -1,5 +1,5 @@
 from fastapi import Request, Depends
-from app.exceptions import UserNotFoundException
+from Backend.app.exceptions import UserNotFoundException
 
 
 async def validate_auth(request: Request):

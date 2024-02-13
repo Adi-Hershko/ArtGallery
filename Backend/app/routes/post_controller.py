@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from typing import Optional
-from app.services.post_service import *
+from Backend.app.services.post_service import *
 from ..pydantic_models.post_models.post_request_model import *
 from uuid import UUID
 

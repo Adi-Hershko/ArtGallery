@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
+from Backend.app.config.models import DbConfig
 import os
-from app.config.models import DbConfig
 
 load_dotenv()
 

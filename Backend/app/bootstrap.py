@@ -1,6 +1,6 @@
 from kink import di
-from app.DB.db_operations import DatabaseOperations
-from app.config.config import db_config
+from Backend.app.config.config import db_config
+from Backend.app.DB.db_operations import DatabaseOperations
 
 
 def bootstrap_di() -> None:
