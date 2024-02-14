@@ -7,3 +7,7 @@ sqlalchemy
 kink
 sqlalchemy_utils
 python-dotenv
+python-multipart
+boto3
+Pillow
+pytest

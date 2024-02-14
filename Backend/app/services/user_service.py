@@ -2,9 +2,10 @@ import bcrypt
 import inspect
 from Backend.app.dals.user_dal import add_user, find_user
 from Backend.app.exceptions import UserNotFoundException, PasswordNotMatchException, OperationError, UserAlreadyExist
-from ..DB.models import User
-from ..pydantic_models.user_models.user_request_model import UserBaseRequestModel, UserInternalRequestModel, UserSearchRequestModel
-from ..pydantic_models.user_models.user_response_model import UserBaseResponseModel, UserInternalResponseModel
+from Backend.app.DB.models import User
+from Backend.app.pydantic_models.user_models.user_request_model import UserBaseRequestModel
+from Backend.app.pydantic_models.user_models.user_response_model import UserBaseResponseModel
+from Backend.app import logger
 
 
 async def create_user(user: UserBaseRequestModel) -> None:
@@ -17,7 +18,7 @@ async def create_user(user: UserBaseRequestModel) -> None:
     except Exception as e:
         module_name = __name__
         function_name = inspect.currentframe().f_code.co_name
-        print(f"Error in {module_name}.{function_name}: Error: {e}")
+        logger.error(f"Error in {module_name}.{function_name}: Error: {e}")
         raise OperationError("Operation error.")
 
 

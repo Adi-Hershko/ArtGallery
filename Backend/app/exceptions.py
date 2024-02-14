@@ -27,3 +27,6 @@ class UsernameTooShort(Exception):
 
 class UsernameTooLong(Exception):
     pass
+
+class ImageAlreadyExists(Exception):
+    pass

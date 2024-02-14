@@ -13,7 +13,8 @@ class PostGetResponseModel(BaseModel):
         description="The description of the post",
         example="This is an example description of a post."
     )
-    pathToImage: str = Field(..., min_length=3, max_length=300)
+    path_to_image: str = Field(..., min_length=3, max_length=300)
+    path_to_thumbnail: str = Field(..., min_length=3, max_length=300)
     insertionTime: datetime = Field(..., description="The time the post was inserted.")
 
     class Config:
@@ -24,7 +25,7 @@ class PostGetResponseModel(BaseModel):
                 "username": "johndoe",
                 "title": "My new post",
                 "description": "This is a new post",
-                "pathToImage": "https://www.example.com/image.jpg",
+                "path_to_image": "https://www.example.com/image.jpg",
                 "insertionTime": "2023-01-01T12:00:00"
             }
         }

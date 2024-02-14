@@ -1,6 +1,8 @@
+from fastapi import UploadFile
 from pydantic import BaseModel, Field, constr
 from uuid import UUID
 from typing import Optional
+
 
 # Field(...) means that the field is required
 class PostUploadRequestModel(BaseModel):
@@ -11,7 +13,7 @@ class PostUploadRequestModel(BaseModel):
         description="The description of the post",
         example="This is an example description of a post."
     )
-    pathToImage: str = Field(..., min_length=3, max_length=300)
+    Image: UploadFile
 
     # An example of how to use this model
     class Config:
@@ -20,7 +22,7 @@ class PostUploadRequestModel(BaseModel):
                 "username": "johndoe",
                 "title": "My new post",
                 "description": "This is a new post",
-                "pathToImage": "https://www.example.com/image.jpg"
+                "Image": "[File.jpg]"
             }
         }
 
@@ -67,7 +69,7 @@ class PostUpdateRequestModel(BaseModel):
         description="The description of the post",
         example="This is an example description of a post."
     )
-    pathToImage: Optional[str] = Field(None, min_length=3, max_length=300)
+    path_to_image: Optional[str] = Field(None, min_length=3, max_length=300)
 
     # An example of how to use this model
     class Config:
@@ -77,7 +79,7 @@ class PostUpdateRequestModel(BaseModel):
                 "postId": "123e4567-e89b-12d3-a456-426614174000",
                 "title": "My new post",
                 "description": "This is a new post",
-                "pathToImage": "https://www.example.com/image.jpg"
+                "path_to_image": "https://www.example.com/image.jpg"
             }
         }
 
@@ -86,5 +88,5 @@ class PostUpdateRequestModel(BaseModel):
             "postId": self.postId,
             "title": self.title,
             "description": self.description,
-            "pathToImage": self.pathToImage,
+            "path_to_image": self.path_to_image,
         }

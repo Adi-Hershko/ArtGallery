@@ -22,9 +22,10 @@ class Post(Base):
     username = Column(String, ForeignKey('users.username'), nullable=False)
     title = Column(String, nullable=False)
     description = Column(String)
-    pathToImage = Column(String, nullable=False)    
-    insertionTime = Column(DateTime(timezone=True), server_default=func.now())    
+    path_to_image = Column(String, nullable=False)    
+    path_to_thumbnail = Column(String, nullable=False)
+    insertionTime = Column(DateTime(timezone=True), server_default=func.now())
     isActive = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
-        return f"<Post(postId='{self.postId}', username='{self.username}', title='{self.title}', description='{self.description}', pathToImage='{self.pathToImage}', insertionTime='{self.insertionTime}', isActive='{self.isActive}')>"
+        return f"<Post(postId='{self.postId}', username='{self.username}', title='{self.title}', description='{self.description}', path_to_image='{self.path_to_image}', insertionTime='{self.insertionTime}', isActive='{self.isActive}')>"

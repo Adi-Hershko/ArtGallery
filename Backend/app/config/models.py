@@ -13,4 +13,16 @@ class DbConfig:
         self.port = port
         self.username = username
         self.password = password
-        self.database = database            
+        self.database = database
+
+
+class S3Config:
+    access_key: str
+    secret_access_key: str
+    bucket_name: str
+    endpoint_url: str
+
+    def __init__(self, access_key: str, secret_access_key: str, bucket_name: str):
+        self.access_key = access_key
+        self.secret_access_key = secret_access_key
+        self.bucket_name = bucket_name
