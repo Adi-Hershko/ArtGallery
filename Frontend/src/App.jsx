@@ -2,8 +2,8 @@ import React, { useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {createBrowserRouter,RouterProvider} from 'react-router-dom'
-import SignInPage from './pages/SignInPage'
-import SignUpPage from './pages/SignUpPage'
+import SignInPage from './pages/SignIn/SignInPage'
+import SignUpPage from './pages/SignUp/SignUpPage'
 import HomePage from './pages/HomePage.jsx'
 
 const router = createBrowserRouter([

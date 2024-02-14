@@ -1,10 +1,10 @@
 from kink import di
 import inspect
-from app.exceptions import OperationError, UserAlreadyExist
-from app.DB.db_operations import DatabaseOperations
+from Backend.app.exceptions import OperationError, UserAlreadyExist
+from Backend.app.DB.db_operations import DatabaseOperations
 from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
-from app.DB.models import User
+from Backend.app.DB.models import User
 
 db_operations = di[DatabaseOperations]
 

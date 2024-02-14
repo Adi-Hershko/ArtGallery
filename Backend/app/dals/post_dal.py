@@ -1,7 +1,7 @@
 from kink import di
 import inspect
-from app.exceptions import OperationError, PostNotFoundException
-from app.DB.db_operations import DatabaseOperations
+from Backend.app.exceptions import OperationError, PostNotFoundException
+from Backend.app.DB.db_operations import DatabaseOperations
 from ..DB.models import Post
 from .queries_statement.query_params import posts_statement_by_name
 from ..pydantic_models.post_models.post_request_model import *

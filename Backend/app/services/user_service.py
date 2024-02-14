@@ -1,7 +1,7 @@
 import bcrypt
 import inspect
-from app.dals.user_dal import add_user, find_user
-from app.exceptions import UserNotFoundException, PasswordNotMatchException, OperationError, UserAlreadyExist
+from Backend.app.dals.user_dal import add_user, find_user
+from Backend.app.exceptions import UserNotFoundException, PasswordNotMatchException, OperationError, UserAlreadyExist
 from ..DB.models import User
 from ..pydantic_models.user_models.user_request_model import UserBaseRequestModel, UserInternalRequestModel, UserSearchRequestModel
 from ..pydantic_models.user_models.user_response_model import UserBaseResponseModel, UserInternalResponseModel

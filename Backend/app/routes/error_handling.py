@@ -1,5 +1,5 @@
 from fastapi.responses import JSONResponse
-from app.exceptions import *
+from Backend.app.exceptions import *
 
 async def default_exception_handler(request, exc):
     return JSONResponse(

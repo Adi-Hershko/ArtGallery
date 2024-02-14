@@ -1,15 +1,16 @@
+import bootstrap
+
+bootstrap.bootstrap_di()
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes.user_controller import user_controller_router
-from app.routes.post_controller import post_controller_router
-from app.exceptions import *
-from app.routes.error_handling import *
+from Backend.app.routes.user_controller import user_controller_router
+from Backend.app.routes.post_controller import post_controller_router
+from Backend.app.routes.error_handling import *
+from Backend.app.config.config import origins
+from Backend.app import logger
 
 app = FastAPI()
-
-origins = [
-    "http://localhost:5173"
-]
 
 app.add_middleware(
     CORSMiddleware,
@@ -34,4 +35,3 @@ app.add_exception_handler(UsernameTooLong, username_too_long_exception_handler)
 
 app.include_router(user_controller_router)
 app.include_router(post_controller_router)
-
