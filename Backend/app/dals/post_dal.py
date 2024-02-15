@@ -1,94 +1,76 @@
 from kink import di
 import inspect
-from Backend.app.exceptions import OperationError, PostNotFoundException
+from Backend.app.exceptions import OperationError
 from Backend.app.DB.db_operations import DatabaseOperations
-from ..DB.models import Post
-from .queries_statement.query_params import posts_statement_by_name
-from ..pydantic_models.post_models.post_request_model import *
+from Backend.app.DB.models import Post
+from Backend.app.dals.queries_statement.query_params import posts_statement_by_name
+from Backend.app.pydantic_models.post_models.post_request_model import *
+from Backend.app import logger
 
 db_operations = di[DatabaseOperations]
+module_name = __name__
 
 
-async def get_all_posts(feed_reqs: dict) -> list[Post]:    
-    posts_response_list = []
-    try:
-        with db_operations.get_session() as session:            
-            query = session.query(Post).filter(Post.isActive)
+async def get_all_posts(feed_reqs: dict) -> list[Post]:
+    logger.info(f"{module_name}.get_all_posts Start fetching post by filters: {feed_reqs}")
+    with db_operations.get_session() as session:
+        query = session.query(Post).filter(Post.isActive)
 
-            for filter_name, value in feed_reqs.items():
-                # print(f"Add join: {filter_name}")
-                query = posts_statement_by_name[filter_name].append_join(query)
+        for filter_name, value in feed_reqs.items():
+            logger.debug(f"{module_name}.get_all_posts Add join: {filter_name}")
+            query = posts_statement_by_name[filter_name].append_join(query)
 
-            for filter_name, condition in feed_reqs.items():
-                # print(f"Add filter: {filter_name}, {query}")
-                query = posts_statement_by_name[filter_name].append_where(query, condition)
-            
+        for filter_name, condition in feed_reqs.items():
+            logger.debug(f"{module_name}.get_all_posts Add filter: {filter_name}")
+            query = posts_statement_by_name[filter_name].append_where(query, condition)
+        try:
             posts = query.all()
-
-            print(f"Rows fetched: {len(posts)}") if posts else print("Posts not found.")
-
-            posts_response_list = list(map(lambda post: Post(
-                postId=post.postId,
-                username=post.username,
-                title=post.title,
-                description=post.description,
-                pathToImage=post.pathToImage,
-                insertionTime=post.insertionTime,
-                isActive=post.isActive
-            ), posts))
-            return posts_response_list
-    except Exception as e:
-        module_name = __name__
-        function_name = inspect.currentframe().f_code.co_name
-        print(f"Error in {module_name}.{function_name}: Error: {e}")
-        raise OperationError("Operation error.")
+        except Exception as e:
+            logger.error(f"{module_name}.get_all_posts Failed to fetch posts, error: {e}")
+            raise OperationError("Operation error.")
+        else:
+            logger.info(f"{module_name}.get_all_posts Rows fetched: {len(posts)}")
+            return posts
 
 
 async def add_post(post: Post):
-    print("Inserting post...")    
-    with db_operations.get_session() as session:            
-        session.add(Post(username=post.username, title=post.title, description=post.description, pathToImage=post.pathToImage))        
+    logger.info(f"{module_name}.add_post Inserting post {post.title}, of {post.username}")
+    with db_operations.get_session() as session:
+        session.add(post)
         try:
             session.commit()
-            print(f"Post '{post.title}' added successfully.")
         except Exception as e:
-            module_name = __name__
-            function_name = inspect.currentframe().f_code.co_name
-            print(f"Error in {module_name}.{function_name}: Error: {e}")
+            logger.error(f"{module_name}.add_post Failed to insert post Error: {e}")
             raise OperationError("Operation error.")
+        else:
+            logger.info(f"{module_name}.add_post Post {post.title}, of {post.username} added successfully.")
 
 
-async def delete_post_in_db(post_id: UUID) -> bool:    
+async def delete_post_in_db(post_id: UUID) -> bool:
+    logger.info(f"{module_name}.delete_post_in_db Deleting post {post_id}")
+
     with db_operations.get_session() as session:
-        print("Deleting post...")
-        result = session.query(Post).filter(Post.postId == post_id).first()        
+        result = session.query(Post).filter(Post.postId == post_id).first()
         if result is None:
-            print(f"Post '{post_id}' not found.")
-            return False
+            logger.info(f"{module_name}.delete_post_in_db Post '{post_id}' not found.")
         try:
             result.isActive = False
             session.commit()
-            print(f"Post '{post_id}' deleted successfully.")
-            return True
+            logger.info(f"{module_name}.delete_post_in_db Post '{post_id}' deleted successfully.")
         except Exception as e:
-            module_name = __name__
-            function_name = inspect.currentframe().f_code.co_name
-            print(f"Error in {module_name}.{function_name}: Error: {e}")
+            logger.error(f"{module_name}.delete_post_in_db Error: {e}")
             raise OperationError("Operation error.")
 
 
-async def update_post_in_db(post_id: UUID, updates: dict) -> int:    
+async def update_post_in_db(post_id: UUID, updates: dict) -> int:
+    logger.info(f"{module_name}.update_post_in_db Updating post...")
     with db_operations.get_session() as session:
-        print("Updating post...")
-
         result = session.query(Post).filter(Post.postId == post_id)
         try:
-            rows_affected = result.update(updates)
+            result.update(updates)
             session.commit()
-            print(f"Post '{post_id}' updated successfully.")                
-            return rows_affected
         except Exception as e:
-            module_name = __name__
-            function_name = inspect.currentframe().f_code.co_name
-            print(f"Error in {module_name}.{function_name}: Error: {e}")
+            logger.error(f"{module_name}.update_post_in_db Error: {e}")
             raise OperationError("Operation error.")
+        else:
+            logger.info(f"{module_name}.update_post_in_db Post '{post_id}' updated successfully.")

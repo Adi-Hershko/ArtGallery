@@ -6,9 +6,10 @@ from uuid import UUID
 
 post_controller_router = APIRouter()
 
+
 @post_controller_router.get("/posts", tags=["Posts"])
-async def get_posts(feedReqs: PostFeedRequestModel = Depends(PostFeedRequestModel)):
-    return await get_feed(feedReqs)
+async def get_posts(feed_reqs: PostFeedRequestModel = Depends(PostFeedRequestModel)):
+    return await get_feed(feed_reqs)
 
 
 @post_controller_router.post("/upload-post", tags=["Posts"])
