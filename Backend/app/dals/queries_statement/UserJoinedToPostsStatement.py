@@ -1,7 +1,7 @@
-from abc import ABC, abstractmethod
 from sqlalchemy.orm import Query
-from .QueryStatementABC import QueryStatement
-from ...DB.models import User, Post
+from app.dals.queries_statement.QueryStatementABC import QueryStatement
+from app.DB.models import User, Post
+
 
 class UserJoinedToPostsStatement(QueryStatement):
     def append_join(self, query: Query) -> Query:
