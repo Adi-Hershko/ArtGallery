@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, exc, inspect
 from sqlalchemy_utils import database_exists, create_database
 from DB.models import Base
-from Backend.app.config.config import db_config
+from app.config.config import db_config
 
 
 def create_database_and_tables(username, password, host, port, db_name):

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from Backend.app.services.user_service import create_user, validate_user
+from app.services.user_service import create_user, validate_user
 from ..pydantic_models.user_models.user_request_model import UserBaseRequestModel
 from ..pydantic_models.user_models.user_response_model import UserBaseResponseModel
 

@@ -3,10 +3,10 @@ from PIL import Image
 from fastapi import UploadFile
 from kink import di
 from botocore.client import BaseClient
-from Backend.app.config.config import s3_config, THUMBNAILS_SIZE
-from exceptions import OperationError
-from Backend.app import logger
-from Backend.app.exceptions import ImageAlreadyExists
+from app.config.config import s3_config, THUMBNAILS_SIZE
+from app.exceptions import OperationError
+from app import logger
+from app.exceptions import ImageAlreadyExists
 
 
 module_name = __name__

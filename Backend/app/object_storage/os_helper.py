@@ -1,7 +1,7 @@
 import boto3
 from botocore.client import BaseClient
 
-from Backend.app.config.config import s3_config
+from app.config.config import s3_config
 
 
 def get_s3_client() -> BaseClient:

@@ -1,4 +1,4 @@
-from config.config import env
+from app.config.config import env
 
 if env == "dev":
-    from Backend.app.logger.dev_logger import logger
+    from app.logger.dev_logger import logger

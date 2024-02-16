@@ -1,11 +1,11 @@
 import bcrypt
 import inspect
-from Backend.app.dals.user_dal import add_user, find_user
-from Backend.app.exceptions import UserNotFoundException, PasswordNotMatchException, OperationError, UserAlreadyExist
-from Backend.app.DB.models import User
-from Backend.app.pydantic_models.user_models.user_request_model import UserBaseRequestModel
-from Backend.app.pydantic_models.user_models.user_response_model import UserBaseResponseModel
-from Backend.app import logger
+from app.dals.user_dal import add_user, find_user
+from app.exceptions import UserNotFoundException, PasswordNotMatchException, OperationError, UserAlreadyExist
+from app.DB.models import User
+from app.pydantic_models.user_models.user_request_model import UserBaseRequestModel
+from app.pydantic_models.user_models.user_response_model import UserBaseResponseModel
+from app import logger
 
 
 async def create_user(user: UserBaseRequestModel) -> None:

@@ -1,11 +1,11 @@
 from kink import di
 import inspect
-from Backend.app.exceptions import OperationError
-from Backend.app.DB.db_operations import DatabaseOperations
-from Backend.app.DB.models import Post
-from Backend.app.dals.queries_statement.query_params import posts_statement_by_name
-from Backend.app.pydantic_models.post_models.post_request_model import *
-from Backend.app import logger
+from app.exceptions import OperationError
+from app.DB.db_operations import DatabaseOperations
+from app.DB.models import Post
+from app.dals.queries_statement.query_params import posts_statement_by_name
+from app.pydantic_models.post_models.post_request_model import *
+from app import logger
 
 db_operations = di[DatabaseOperations]
 module_name = __name__

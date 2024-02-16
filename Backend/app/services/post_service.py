@@ -1,8 +1,8 @@
-from Backend.app.dals.post_dal import *
-from Backend.app.dals.user_dal import find_user
-from Backend.app.exceptions import UserNotFoundException
-from Backend.app.pydantic_models.post_models.post_response_model import *
-from Backend.app.services import os_service
+from app.dals.post_dal import *
+from app.dals.user_dal import find_user
+from app.exceptions import UserNotFoundException
+from app.pydantic_models.post_models.post_response_model import *
+from app.services import os_service
 
 
 async def get_feed(feed_reqs: PostFeedRequestModel):

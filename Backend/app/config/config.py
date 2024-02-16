@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from Backend.app.config.models import DbConfig, S3Config
+from app.config.models import DbConfig, S3Config
 import os
 
 load_dotenv()
