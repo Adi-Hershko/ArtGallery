@@ -1,1 +1,1 @@
-from Backend.app.logger.dev_logger import logger
+from app.logger.dev_logger import logger

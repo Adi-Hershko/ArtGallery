@@ -1,14 +1,14 @@
-import bootstrap
+import app.bootstrap as bootstrap
 
 bootstrap.bootstrap_di()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from Backend.app.routes.user_controller import user_controller_router
-from Backend.app.routes.post_controller import post_controller_router
-from Backend.app.routes.error_handling import *
-from Backend.app.config.config import origins
-from Backend.app import logger
+from app.routes.user_controller import user_controller_router
+from app.routes.post_controller import post_controller_router
+from app.routes.error_handling import *
+from app.config.config import origins
+from app import logger
 
 app = FastAPI()
 

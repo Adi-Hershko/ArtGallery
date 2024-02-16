@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from Backend.app.config.models import DbConfig
+from app.config.models import DbConfig
 
 
 class DatabaseOperations:
