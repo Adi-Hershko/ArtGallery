@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Query
-from ...DB.models import User, Post
-from .QueryStatementABC import QueryStatement
+from app.DB.models import Post
+from app.dals.queries_statement.QueryStatementABC import QueryStatement
+
 
 class TitlesStatement(QueryStatement):
     def append_join(self, query: Query) -> Query:
