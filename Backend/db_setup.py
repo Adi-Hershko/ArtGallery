@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, exc, inspect
 from sqlalchemy_utils import database_exists, create_database
 from app.DB.models import Base
 from app.config.config import db_config
-
+from app.application import logger
 
 def create_database_and_tables(username, password, host, port, db_name):
     # Connection string
@@ -12,9 +12,9 @@ def create_database_and_tables(username, password, host, port, db_name):
     if not database_exists(db_url):
         try:
             create_database(db_url)
-            print(f"Database '{db_name}' created successfully.")  # change to log later
+            logger.info(f"Database '{db_name}' created successfully.")  # change to log later
         except exc.SQLAlchemyError as e:
-            print(f"An error occurred while creating the database: {e}")
+            logger.error(f"An error occurred while creating the database: {e}")
             return
 
     # Connect to the database
@@ -30,9 +30,9 @@ def create_database_and_tables(username, password, host, port, db_name):
     if not set(Base.metadata.tables.keys()).issubset(set(tables)):
         try:
             Base.metadata.create_all(engine)
-            print("Tables created successfully.")
+            logger.info("Tables created successfully.")
         except exc.SQLAlchemyError as e:
-            print(f"An error occurred while creating the tables: {e}")
+            logger.error(f"An error occurred while creating the tables: {e}")
 
 
 # Directly runnable for testing

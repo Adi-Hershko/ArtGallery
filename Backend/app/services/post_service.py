@@ -12,11 +12,11 @@ async def get_feed(feed_reqs: PostFeedRequestModel):
     return list(map(
         lambda post: PostGetResponseModel(
             username=post.username,
-            postId=post.postId,
+            postId=post.post_id,
             title=post.title,
             description=post.description,
             path_to_image=post.path_to_image,
-            insertionTime=post.insertionTime,
+            insertionTime=post.insertion_time,
             path_to_thumbnail=post.path_to_thumbnail
         ), posts
     ))
