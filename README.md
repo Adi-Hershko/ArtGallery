@@ -65,10 +65,6 @@ ArtGallery offers a range of features designed to enhance the experience of expl
 
 We welcome contributions to the ArtGallery project! If you have suggestions for improvements or encounter any issues, please feel free to open an issue or submit a pull request.
 
-## License
-
-This project is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute the code as you see fit.
-
 ## Acknowledgments
 
 A special thank you to all contributors and the open source community for making projects like this possible.
