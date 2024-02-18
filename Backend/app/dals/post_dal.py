@@ -14,7 +14,7 @@ module_name = __name__
 async def get_all_posts(feed_reqs: dict) -> list[Post]:
     logger.info(f"{module_name}.get_all_posts Start fetching post by filters: {feed_reqs}")
     with db_operations.get_session() as session:
-        query = session.query(Post).filter(Post.isActive)
+        query = session.query(Post).filter(Post.is_active)
 
         for filter_name, value in feed_reqs.items():
             logger.debug(f"{module_name}.get_all_posts Add join: {filter_name}")
@@ -50,7 +50,7 @@ async def delete_post_in_db(post_id: UUID) -> bool:
     logger.info(f"{module_name}.delete_post_in_db Deleting post {post_id}")
 
     with db_operations.get_session() as session:
-        result = session.query(Post).filter(Post.postId == post_id).first()
+        result = session.query(Post).filter(Post.post_id == post_id).first()
         if result is None:
             logger.info(f"{module_name}.delete_post_in_db Post '{post_id}' not found.")
         try:
@@ -65,7 +65,7 @@ async def delete_post_in_db(post_id: UUID) -> bool:
 async def update_post_in_db(post_id: UUID, updates: dict) -> int:
     logger.info(f"{module_name}.update_post_in_db Updating post...")
     with db_operations.get_session() as session:
-        result = session.query(Post).filter(Post.postId == post_id)
+        result = session.query(Post).filter(Post.post_id == post_id)
         try:
             result.update(updates)
             session.commit()
