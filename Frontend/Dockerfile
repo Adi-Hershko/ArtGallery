@@ -1,5 +1,5 @@
 # Use an official Node runtime as a parent image
-FROM node:14
+FROM node:16
 
 # Set the working directory in the container
 WORKDIR /app
@@ -17,4 +17,5 @@ COPY . .
 EXPOSE 5173
 
 # Define command to run the app using Vite
-CMD ["npm", "run", "dev", "--", "--host"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+

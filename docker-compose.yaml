@@ -67,5 +67,15 @@ services:
       S3_LOCAL_URL: http://localstack:4566
       ENV: dev
 
+  frontend:
+    image: frontend:latest
+    ports:
+      - "5173:5173"
+    networks:
+      - art-gallery-network
+    depends_on:
+      - backend
+
+
 networks:
   art-gallery-network:
