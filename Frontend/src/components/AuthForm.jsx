@@ -1,39 +1,37 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Bounce, toast } from 'react-toastify';
+import { toast, Bounce } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import SignUpFormView from './SignUpFormView';
+import AuthFormView from './AuthFormView'; // Using the unified view component
 
-function SignUpForm() {
+function AuthForm({ mode }) {
   const navigate = useNavigate();
   const [formFields, setFormFields] = useState({ username: '', password: '' });
   const [formErrors, setFormErrors] = useState({ username: '', password: '' });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormFields({ ...formFields, [name]: value });
+    setFormFields(prev => ({ ...prev, [name]: value }));
 
-    if (name === 'username') {
-      setFormErrors({
-        ...formErrors,
-        username: value.length >= 3 && value.length <= 50 ? '' : 'Username must be between 3 and 50 characters',
-      });
-    } else if (name === 'password') {
-      setFormErrors({
-        ...formErrors,
-        password: value.length >= 6 && value.length <= 50 ? '' : 'Password must be between 6 and 50 characters',
-      });
-    }
+    const errorMessages = {
+      username: value.length >= 3 && value.length <= 50 ? '' : 'Username must be between 3 and 50 characters',
+      password: value.length >= 6 && value.length <= 50 ? '' : 'Password must be between 6 and 50 characters',
+    };
+    setFormErrors(prev => ({ ...prev, [name]: errorMessages[name] }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!formErrors.username && !formErrors.password) {
       try {
-        const base_url = import.meta.env.VITE_BASE_URL;
-        const api_url = `${base_url}/sign-up`;
+        const base_url = import.meta.env.VITE_BASE_URL; // Ensure you have VITE_BASE_URL in your .env
+        const endpoint = mode === 'signup' ? '/sign-up' : '/sign-in';
+        const api_url = `${base_url}${endpoint}`;
+
         const res = await axios.post(api_url, formFields);
-        toast.success(res.data.message, {
+        const message = mode === 'signup' ? res.data.message : `Welcome, ${res.data.username}`;
+
+        toast.success(message, {
           position: 'bottom-left',
           autoClose: 2000,
           hideProgressBar: false,
@@ -44,8 +42,10 @@ function SignUpForm() {
           theme: 'light',
           transition: Bounce,
         });
+
         setTimeout(() => {
-          navigate('/sign-in');
+          // TODO: Redirect to the feed page
+          navigate(mode === 'signup' ? '/sign-in' : '/'); // Navigate based on the operation mode
         }, 3000);
       } catch (error) {
         toast.error(error.response.data.message, {
@@ -64,7 +64,8 @@ function SignUpForm() {
   };
 
   return (
-    <SignUpFormView
+    <AuthFormView
+      mode={mode}
       formFields={formFields}
       formErrors={formErrors}
       handleChange={handleChange}
@@ -73,4 +74,4 @@ function SignUpForm() {
   );
 }
 
-export default SignUpForm;
+export default AuthForm;

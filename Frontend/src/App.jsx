@@ -1,33 +1,19 @@
-import React, { useState} from 'react'
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import {createBrowserRouter,RouterProvider} from 'react-router-dom'
-import SignInPage from './pages/SignIn/SignInPage'
-import SignUpPage from './pages/SignUp/SignUpPage'
-import HomePage from './pages/HomePage.jsx'
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage'; // Assuming you have a HomePage component
+import AuthPage from './pages/AuthPage'; // The unified AuthPage component
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <HomePage />,
-  },
-  {
-    path:"/sign-in",
-    element:<SignInPage/>
-  },
-  {
-    path:"/sign-up",
-    element:<SignUpPage/>
-  },
-]);
-
-
-
-function App() {  
-
+function App() {
   return (
-    <RouterProvider router={router}/>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/sign-in" element={<AuthPage mode="signin" />} />
+        <Route path="/sign-up" element={<AuthPage mode="signup" />} />
+        {/* Define other routes as needed */}
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
