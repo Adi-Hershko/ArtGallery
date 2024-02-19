@@ -5,10 +5,18 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
+import { ToastContainer, toast } from 'react-toastify';
+import { Bounce } from 'react-toastify';
+
 
 function SignUpFormView({ formFields, formErrors, handleChange, handleSubmit }) {
   return (
-    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+    <Box
+      component="form"
+      noValidate
+      onSubmit={handleSubmit}
+      sx={{ mt: 1 }}
+    >
       <TextField
         margin="normal"
         required
@@ -47,6 +55,18 @@ function SignUpFormView({ formFields, formErrors, handleChange, handleSubmit }) 
           </Link>
         </Grid>
       </Grid>
+      <ToastContainer
+        position="bottom-left"
+        autoClose={2000}
+        hideProgressBar={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </Box>
   );
 }

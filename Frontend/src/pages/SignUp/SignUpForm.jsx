@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Bounce, ToastContainer, toast } from 'react-toastify';
+import { Bounce, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import SignUpFormView from './SignUpFormView';
 

@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import SignUpForm from './SignUpForm';
-import Background from './Backgroud'
+import Background from './Background'
 import 'react-toastify/dist/ReactToastify.css';
 
 function SignUpPage() {
