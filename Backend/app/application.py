@@ -4,8 +4,8 @@ bootstrap.bootstrap_di()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes.user_controller import user_controller_router
-from app.routes.post_controller import post_controller_router
+from app.routes.user_controller import UserController
+from app.routes.post_controller import PostController
 from app.routes.error_handling import *
 from app.config.config import origins
 from app import logger
@@ -33,5 +33,8 @@ app.add_exception_handler(PasswordTooLong, password_too_long_exception_handler)
 app.add_exception_handler(UsernameTooShort, username_too_short_exception_handler)
 app.add_exception_handler(UsernameTooLong, username_too_long_exception_handler)
 
-app.include_router(user_controller_router)
-app.include_router(post_controller_router)
+user_controller = UserController()
+post_controller = PostController()
+
+app.include_router(user_controller.router)
+app.include_router(post_controller.router)
