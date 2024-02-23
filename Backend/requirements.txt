@@ -13,3 +13,4 @@ Pillow
 pytest
 localstack
 awscli-local
+pytest-asyncio

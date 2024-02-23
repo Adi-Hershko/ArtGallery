@@ -8,7 +8,7 @@ from typing import Optional
 class PostUploadRequestModel(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     title: str = Field(..., min_length=3, max_length=50)
-    description: Optional[constr(min_length=3, max_length=200)] = Field(
+    description: Optional[constr(min_length=3, max_length=200)] = Field( # type: ignore
         default=None, 
         description="The description of the post",
         example="This is an example description of a post."
@@ -64,7 +64,7 @@ class PostFeedRequestModel(BaseModel):
 class PostUpdateRequestModel(BaseModel):
     postId: UUID = Field(..., description="The id of the post")
     title: Optional[str] = Field(None, min_length=3, max_length=50)
-    description: Optional[constr(min_length=3, max_length=200)] = Field(
+    description: Optional[constr(min_length=3, max_length=200)] = Field( # type: ignore
         default=None, 
         description="The description of the post",
         example="This is an example description of a post."
