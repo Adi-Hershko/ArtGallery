@@ -44,8 +44,7 @@ function AuthForm({ mode }) {
         });
 
         setTimeout(() => {
-          // TODO: Redirect to the feed page
-          navigate(mode === 'signup' ? '/sign-in' : '/'); // Navigate based on the operation mode
+          navigate(mode === 'signup' ? '/feed' : '/sign-in');
         }, 3000);
       } catch (error) {
         toast.error(error.response.data.message, {

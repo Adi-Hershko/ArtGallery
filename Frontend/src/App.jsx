@@ -1,7 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage'; // Assuming you have a HomePage component
-import AuthPage from './pages/AuthPage'; // The unified AuthPage component
+import HomePage from './pages/HomePage';
+import AuthPage from './pages/AuthPage'; 
+import FeedPage from './pages/FeedPage'; 
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/sign-in" element={<AuthPage mode="signin" />} />
         <Route path="/sign-up" element={<AuthPage mode="signup" />} />
+        <Route path="/feed" element={<FeedPage />} />
         {/* Define other routes as needed */}
       </Routes>
     </BrowserRouter>
