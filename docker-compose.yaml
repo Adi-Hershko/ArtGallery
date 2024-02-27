@@ -3,6 +3,8 @@ version: '3.8'
 services:
   postgres:
     image: postgres:latest
+    ports:
+      - 5432:5432
     networks:
       - art-gallery-network
     volumes:
@@ -69,3 +71,4 @@ services:
 
 networks:
   art-gallery-network:
+    driver: bridge
