@@ -3,12 +3,22 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
+import CustomToast from './CustomToast';
 
-function SignUpFormView({ formFields, formErrors, handleChange, handleSubmit }) {
+function AuthFormView({ formFields, formErrors, handleChange, handleSubmit, mode }) {
+  const isSignUp = mode === 'signup';
+  const buttonText = isSignUp ? 'Register' : 'Sign In';
+  const switchModeText = isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign up";
+  const switchModeLink = isSignUp ? '/sign-in' : '/sign-up';
+
   return (
-    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+    <Box
+      component="form"
+      noValidate
+      onSubmit={handleSubmit}
+      sx={{ mt: 1 }}
+    >
       <TextField
         margin="normal"
         required
@@ -37,18 +47,24 @@ function SignUpFormView({ formFields, formErrors, handleChange, handleSubmit }) 
         error={!!formErrors.password}
         helperText={formErrors.password}
       />
-      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-        Register
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        sx={{ mt: 3, mb: 2 }}
+      >
+        {buttonText}
       </Button>
       <Grid container justifyContent="center">
         <Grid item>
-          <Link href="sign-in" variant="body2">
-            {'Already have an account? Sign In'}
+          <Link href={switchModeLink} variant="body2">
+            {switchModeText}
           </Link>
         </Grid>
       </Grid>
+      <CustomToast />
     </Box>
   );
 }
 
-export default SignUpFormView;
+export default AuthFormView;
