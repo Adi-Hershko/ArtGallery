@@ -3,6 +3,8 @@ version: '3.8'
 services:
   postgres:
     image: postgres:latest
+    ports:
+      - 5432:5432
     networks:
       - art-gallery-network
     volumes:
@@ -45,27 +47,28 @@ services:
       aws --endpoint-url=http://localstack:4566 s3api create-bucket --bucket art-gallery --create-bucket-configuration LocationConstraint=eu-west-1
       '
 
-  backend:
-    image: backend:latest
-    ports:
-      - "8000:8000"
-    networks:
-      - art-gallery-network
-    depends_on:
-      - postgres
-      - localstack
-      - create-bucket
-    environment:
-      DB_USERNAME: postgres
-      DB_PASSWORD: 123456
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: ArtGallery
-      AWS_ACCESS_KEY: test
-      AWS_SECRET_ACCESS_KEY: test
-      BUCKET_NAME: art-gallery
-      S3_LOCAL_URL: http://localstack:4566
-      ENV: dev
+  # backend:
+  #   image: backend:latest
+  #   ports:
+  #     - "8000:8000"
+  #   networks:
+  #     - art-gallery-network
+  #   depends_on:
+  #     - postgres
+  #     - localstack
+  #     - create-bucket
+  #   environment:
+  #     DB_USERNAME: postgres
+  #     DB_PASSWORD: 123456
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_NAME: ArtGallery
+  #     AWS_ACCESS_KEY: test
+  #     AWS_SECRET_ACCESS_KEY: test
+  #     BUCKET_NAME: art-gallery
+  #     S3_LOCAL_URL: http://localstack:4566
+  #     ENV: dev
 
 networks:
   art-gallery-network:
+    driver: bridge
