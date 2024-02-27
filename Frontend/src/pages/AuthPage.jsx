@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import AuthForm from '../components/AuthForm';
 import Background from '../components/Background';
-import 'react-toastify/dist/ReactToastify.css';
+
 
 function AuthPage({ mode }) {
   const titleText = mode === 'signup' ? 'Sign Up' : 'Sign In';

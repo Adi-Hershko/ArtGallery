@@ -1,11 +1,20 @@
 import React from "react";
+import ResponsiveAppBar from "../components/ResponsiveAppBar";
+import { Box } from "@mui/material";
 
 function FeedPage() {
     return (
-        <div>
-            <h1>Feed</h1>
-            <p>Welcome to the feed page!</p>
-        </div>
+        <Box
+            sx={{
+                width: '100%',
+                height: '100vh',
+                backgroundImage: `url('backgroundImage.webp')`,
+                backgroundSize: 'fit',
+                backgroundPosition: 'center',
+            }}
+        >
+            <ResponsiveAppBar />
+        </Box>
     );
 }
 
