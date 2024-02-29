@@ -1,6 +1,7 @@
 import React from "react";
 import ResponsiveAppBar from "../components/ResponsiveAppBar";
 import { Box } from "@mui/material";
+import CustomCard from "../components/CustomCard";
 
 function FeedPage() {
     return (
@@ -14,6 +15,12 @@ function FeedPage() {
             }}
         >
             <ResponsiveAppBar />
+            <CustomCard
+                title="Title"
+                date="September 14, 2016"
+                imgSrc="https://source.unsplash.com/random"
+                desc="Description"
+            />
         </Box>
     );
 }

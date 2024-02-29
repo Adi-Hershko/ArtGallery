@@ -13,7 +13,7 @@ class PostService:
         self.os_service = os_service
 
     async def get_feed(self, feed_reqs: PostFeedRequestModel):
-        not_nullables_conditions = {key: value for key, value in feed_reqs.convert_to_dict().items() if value is not None}
+        not_nullables_conditions = {key: value for key, value in feed_reqs.convert_to_dict().items() if value is not None and value.strip() != ''}
         posts = await self.post_dal.get_all_posts(not_nullables_conditions)
 
         return list(map(

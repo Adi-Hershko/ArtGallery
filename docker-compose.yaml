@@ -20,8 +20,8 @@ services:
       - art-gallery-network
     image: localstack/localstack
     ports:
-      - "127.0.0.1:4566:4566"            
-      - "127.0.0.1:4510-4559:4510-4559" 
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4510-4559:4510-4559"
     environment:
       - DEBUG=${DEBUG:-0}
       - DATA_DIR=/tmp/localstack/data
@@ -31,7 +31,7 @@ services:
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
-      
+
   create-bucket:
     image: amazon/aws-cli
     networks:
@@ -42,41 +42,38 @@ services:
       - AWS_DEFAULT_REGION=us-west-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
-    entrypoint: > 
-      sh -c '
-      aws --endpoint-url=http://localstack:4566 s3api create-bucket --bucket art-gallery --create-bucket-configuration LocationConstraint=eu-west-1
-      '
+    entrypoint: >
+      sh -c ' aws --endpoint-url=http://localstack:4566 s3api create-bucket --bucket art-gallery --create-bucket-configuration LocationConstraint=eu-west-1 '
+  # backend:
+  #   image: backend:latest
+  #   ports:
+  #     - "8000:8000"
+  #   networks:
+  #     - art-gallery-network
+  #   depends_on:
+  #     - postgres
+  #     - localstack
+  #     - create-bucket
+  #   environment:
+  #     DB_USERNAME: postgres
+  #     DB_PASSWORD: 123456
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_NAME: ArtGallery
+  #     AWS_ACCESS_KEY: test
+  #     AWS_SECRET_ACCESS_KEY: test
+  #     BUCKET_NAME: art-gallery
+  #     S3_LOCAL_URL: http://localstack:4566
+  #     ENV: dev
 
-  backend:
-    image: backend:latest
-    ports:
-      - "8000:8000"
-    networks:
-      - art-gallery-network
-    depends_on:
-      - postgres
-      - localstack
-      - create-bucket
-    environment:
-      DB_USERNAME: postgres
-      DB_PASSWORD: 123456
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: ArtGallery
-      AWS_ACCESS_KEY: test
-      AWS_SECRET_ACCESS_KEY: test
-      BUCKET_NAME: art-gallery
-      S3_LOCAL_URL: http://localstack:4566
-      ENV: dev
-
-  frontend:
-    image: frontend:latest
-    ports:
-      - "5173:5173"
-    networks:
-      - art-gallery-network
-    depends_on:
-      - backend
+  # frontend:
+  #   image: frontend:latest
+  #   ports:
+  #     - "5173:5173"
+  #   networks:
+  #     - art-gallery-network
+  #   depends_on:
+  #     - backend
 
 
 networks:

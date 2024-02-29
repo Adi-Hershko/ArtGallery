@@ -72,6 +72,7 @@ function ResponsiveAppBar() {
       const response = await axios.get(`${baseURL}/posts`, {
         params: { title, username },
       });
+      console.log(response.data);
       if (response.data.length !== 0) {
         toast.dismiss();
         toast.success('Posts found!', {

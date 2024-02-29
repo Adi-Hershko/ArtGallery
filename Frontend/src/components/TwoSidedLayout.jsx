@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import AspectRatio from '@mui/joy/AspectRatio';
 import Box from '@mui/joy/Box';
 import Container from '@mui/joy/Container';
@@ -6,7 +6,8 @@ import { typographyClasses } from '@mui/joy/Typography';
 import Skeleton from '@mui/material/Skeleton';
 
 
-export default function TwoSidedLayout({ children, reversed , imgSrc}) {
+export default function TwoSidedLayout({ children, reversed, imgSrc }) {
+  const [imgLoaded, setImgLoaded] = useState(false);
   return (
     <Container
       sx={(theme) => ({
@@ -65,10 +66,26 @@ export default function TwoSidedLayout({ children, reversed , imgSrc}) {
           flexBasis: '50%',
         })}
       >
-        <img
-          src={imgSrc}
-          alt="ArtGalleryApp"
-        />
+        <Box>
+          <Skeleton
+            variant="rectangular"
+            animation="wave"
+            sx={{
+              width: '100%',
+              height: '100%',
+              borderRadius: 'sm',
+              display: imgLoaded ? 'none' : 'block',
+            }}
+          />
+          <img
+            src={imgSrc}
+            alt="Hero Image"
+            onLoad={() => setImgLoaded(true)}
+            style={{ display: imgLoaded ? 'block' : 'none' }}
+          />
+        </Box>
+
+
       </AspectRatio>
     </Container>
   );

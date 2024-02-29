@@ -52,6 +52,44 @@ async def test_get_feed_with_empty_conditions():
 
 
 @pytest.mark.asyncio
+async def test_get_feed_with_emtpy_string_conditions():
+    mock_post_dal = PostDal
+    mock_user_dal = UserDal
+    mock_os_service = OsService
+    mock_feed_reqs = Mock(PostFeedRequestModel, convert_to_dict=Mock(return_value={'username': ''}))
+
+    mock_post_dal.get_all_posts = AsyncMock()
+
+    mock_post_1 = Mock(Post, 
+                       post_id=uuid4(), 
+                       username="user1", 
+                       title="title1", 
+                       description="desc1", 
+                       path_to_image="http://example.com/image1.jpg", 
+                       insertion_time=datetime.now(), 
+                       path_to_thumbnail="http://example.com/thumb1.jpg")
+    mock_post_2 = Mock(Post, 
+                       post_id=uuid4(), 
+                       username="user2", 
+                       title="title2", 
+                       description="desc2", 
+                       path_to_image="http://example.com/image2.jpg", 
+                       insertion_time=datetime.now(), 
+                       path_to_thumbnail="http://example.com/thumb2.jpg")
+
+    mock_posts = [mock_post_1, mock_post_2]
+
+    mock_post_dal.get_all_posts.return_value = mock_posts
+
+    post_service = PostService(mock_post_dal, mock_user_dal, mock_os_service)
+    result_posts = await post_service.get_feed(mock_feed_reqs)
+
+    assert len(result_posts) == 2
+    assert all(isinstance(post, PostGetResponseModel) for post in result_posts)
+    mock_post_dal.get_all_posts.assert_called_once_with({})
+
+
+@pytest.mark.asyncio
 async def test_get_feed_with_non_empty_conditions():
     mock_post_dal = PostDal
     mock_user_dal = UserDal
