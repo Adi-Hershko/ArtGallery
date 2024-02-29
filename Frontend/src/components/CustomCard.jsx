@@ -26,12 +26,24 @@ const ExpandMore = styled((props) => {
     }),
 }));
 
-export default function CustomCard(props) {
+function convertDate(date) {
+    return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: '2-digit',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: false
+    }).format(new Date(date));
+}
+
+export default function CustomCard({ sx, ...props }) {
     return (
-        <Card sx={{ maxWidth: 345 }}>
+        <Card sx={{ ...sx, width: 'auto', height: 'auto' }}>
             <CardHeader
                 avatar={
-                    <Avatar sx={{ bgcolor: red[500] }} >
+                    <Avatar sx={{ bgcolor: red[500] }} aria-label='recipe'>
+                        {props.username[0]}
                     </Avatar>
                 }
                 action={
@@ -40,21 +52,27 @@ export default function CustomCard(props) {
                     </IconButton>
                 }
                 title={props.title}
-                subheader={props.date}
-
+                subheader={`Posted by ${props.username} on ${convertDate(props.date)}`}
             />
             <CardMedia
                 component="img"
-                height="194"
+                alt={props.title}
                 title={props.title}
                 image={props.imgSrc}
+                sx={{
+                    objectFit: 'contain',
+                    width: '100%',
+                    height: 'fit-content',
+                    padding: '10px',
+                }}
             />
-            <CardContent>
-                <Typography variant="body3" color="text.secondary">
-                    {props.desc}
-                </Typography>
-            </CardContent>
-
+            {props.desc && props.desc.trim() && (
+                <CardContent>
+                    <Typography variant="body2" color="text.secondary">
+                        {props.desc}
+                    </Typography>
+                </CardContent>
+            )}
             {/* For later usage */}
             {/* <CardActions disableSpacing>
                 <IconButton aria-label="add to favorites">
@@ -64,7 +82,6 @@ export default function CustomCard(props) {
                     <ShareIcon />
                 </IconButton>
             </CardActions> */}
-
         </Card>
     );
 }

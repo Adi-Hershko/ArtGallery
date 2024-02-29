@@ -14,5 +14,7 @@ export default defineConfig({
   define: {
     'process.env': envWithVitePrefix,
   },
-  // Your Vite configuration...
+  optimizeDeps: {
+    include: ['axios', 'react', 'react-dom', 'react-router-dom', 'react-masonry-css'],
+  },
 });

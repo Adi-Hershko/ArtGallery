@@ -99,7 +99,7 @@ function ResponsiveAppBar() {
   }
 
   return (
-    <AppBar position="static" color='inherit' elevation={4}>  {/* change position to 'fixed' / 'sticky' to make the app bar fixed or perhaps sticky */}
+    <AppBar position="sticky" color='inherit' elevation={4}>  {/* change position to 'fixed' / 'sticky' to make the app bar fixed or perhaps sticky */}
       <Container maxWidth="xxl">
         <Toolbar disableGutters >
           <BrushIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
