@@ -23,7 +23,7 @@ class UserController:
 
     async def sign_up(self, user: UserBaseRequestModel) -> dict:
         await self.user_service.create_user(user)
-        return {"message": f"{user.username} has been signed up."}
+        return {"message": f"{user.username} has been signed up.", "username": user.username}
 
     async def sign_in(self, user: UserBaseRequestModel) -> UserBaseResponseModel:
         return await self.user_service.validate_user(user)

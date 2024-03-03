@@ -4,7 +4,6 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
-import CustomToast from './CustomToast';
 
 function AuthFormView({ formFields, formErrors, handleChange, handleSubmit, mode }) {
   const isSignUp = mode === 'signup';
@@ -62,7 +61,6 @@ function AuthFormView({ formFields, formErrors, handleChange, handleSubmit, mode
           </Link>
         </Grid>
       </Grid>
-      <CustomToast />
     </Box>
   );
 }

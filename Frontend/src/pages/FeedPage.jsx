@@ -1,18 +1,25 @@
 import React from "react";
 import ResponsiveAppBar from "../components/ResponsiveAppBar";
-import { Box, Grid } from "@mui/material";
 import CustomCard from "../components/CustomCard";
 import axios from "axios";
 import Masonry from '@mui/lab/Masonry';
-
+import CustomAddButton from "../components/CustomAddButton";
+import CustomFeedContainer from "../components/CustomFeedContainer";
+import DraggableDialog from "../components/DraggableDialog";
 
 function FeedPage() {
-
     const [posts, setPosts] = React.useState([]);
-    const local_s3_url = "https://art-gallery.s3.localhost.localstack.cloud:4566/"; // TODO: Insert it later into .env
+    const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [currentPost, setCurrentPost] = React.useState(null); // For edit operation
+    const local_s3_url = "https://art-gallery.s3.localhost.localstack.cloud:4566/";
+
+    const handleOpenDialog = (post = null) => {
+        setCurrentPost(post); // `null` for new post, or the post data for editing
+        setDialogOpen(true);
+    };
 
     React.useEffect(() => {
-        const base_url = import.meta.env.VITE_BASE_URL; // Ensure you have VITE_BASE_URL in your .env
+        const base_url = import.meta.env.VITE_BASE_URL;
         const api_url = `${base_url}/posts`;
 
         axios.get(api_url)
@@ -25,23 +32,9 @@ function FeedPage() {
     }, []);
 
     return (
-        <Box
-            sx={{
-                width: '100%',
-                minHeight: '100vh',
-                backgroundImage: `url('backgroundImage.webp')`,
-                backgroundSize: 'fill',
-                backgroundPosition: 'center',
-                backgroundAttachment: 'fixed',
-            }}
-        >
+        <CustomFeedContainer>
             <ResponsiveAppBar />
-            <Masonry columns={4} spacing={3} sx={
-                {
-                    marginX: 'auto',
-                    paddingTop: '10px',
-                }
-            }>
+            <Masonry columns={4} spacing={3} sx={{ marginX: 'auto', paddingTop: '10px' }}>
                 {posts.map((post) => (
                     <CustomCard
                         key={post.postId}
@@ -51,10 +44,29 @@ function FeedPage() {
                         imgSrc={local_s3_url + post.path_to_image}
                         date={post.insertionTime}
                         sx={{ backgroundColor: '#E0E0E0' }}
+                        onClick={() => handleOpenDialog(post)} // Assuming CustomCard can handle onClick for edit
                     />
                 ))}
             </Masonry>
-        </Box>
+            <CustomAddButton onClick={() => handleOpenDialog()} />
+            {dialogOpen && (
+                <DraggableDialog
+                    open={dialogOpen}
+                    onClose={() => setDialogOpen(false)}
+                    post={currentPost} // Pass `null` for new post, or the post data for editing
+                    onSave={(newData) => {
+                        // Handle save operation (either create or update)
+                        setDialogOpen(false);
+                        if (currentPost) {
+                            // Update logic
+                        } else {
+                            // Add logic
+                            setPosts([...posts, newData]); // Example for add
+                        }
+                    }}
+                />
+            )}
+        </CustomFeedContainer>
     );
 }
 

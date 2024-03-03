@@ -30,12 +30,11 @@ export default function HomePage() {
           display: 'flex',
           flexWrap: 'wrap',
           gap: 2,
-          my: 2,          
+          my: 2,
           alignSelf: 'center',
           '& > *': { flex: 'auto' },
-          
         }}
-      >        
+      >
         <Link href='sign-up'>
           <Button size="lg" variant="outlined" color="neutral">
             Join us now
@@ -43,7 +42,7 @@ export default function HomePage() {
         </Link>
         <Link href='sign-in'>
           <Button size="lg" endDecorator={<ArrowForward fontSize="xl" />}>
-            Sign In      
+            Sign In
           </Button>
         </Link>
       </Box>
@@ -60,11 +59,11 @@ export default function HomePage() {
         }}
       >
         <AvatarGroup size="lg">
-          <Avatar src='alex.jpg'/>
-          <Avatar src='jake.jpg'/>
-          <Avatar src='joseph.jpg'/>
-          <Avatar src='michael.jpg'/>
-          <Avatar src='vickey.jpg'/>
+          <Avatar src='alex.jpg' />
+          <Avatar src='jake.jpg' />
+          <Avatar src='joseph.jpg' />
+          <Avatar src='michael.jpg' />
+          <Avatar src='vickey.jpg' />
         </AvatarGroup>
         <Typography textColor="text.secondary">
           Become part of a growing community of over <b>20K</b> <br />
@@ -79,7 +78,7 @@ export default function HomePage() {
           left: '50%',
           transform: 'translateX(-50%)',
         }}
-      >        
+      >
       </Typography>
     </TwoSidedLayout>
   );

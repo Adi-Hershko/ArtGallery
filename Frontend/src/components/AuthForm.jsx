@@ -3,9 +3,13 @@ import axios from 'axios';
 import { toast, Bounce } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import AuthFormView from './AuthFormView'; // Using the unified view component
+import { useUser } from '../contexts/UserContext';
+import { useAuth } from '../hooks/useAuth';
 
 function AuthForm({ mode }) {
+  const { setUser } = useUser();
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formFields, setFormFields] = useState({ username: '', password: '' });
   const [formErrors, setFormErrors] = useState({ username: '', password: '' });
 
@@ -44,6 +48,8 @@ function AuthForm({ mode }) {
         });
 
         setTimeout(() => {
+          setUser({ username: res.data.username })
+          login({ username: res.data.username });
           navigate("/feed");
         }, 3000);
       } catch (error) {

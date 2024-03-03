@@ -17,6 +17,8 @@ import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import CustomToast from './CustomToast';
+import { useUser } from '../contexts/UserContext';
+import { useAuth } from '../hooks/useAuth';
 
 
 const pages = []; // edit pages here
@@ -28,6 +30,8 @@ function ResponsiveAppBar() {
   const [title, setTitle] = React.useState('');
   const [username, setUsername] = React.useState('');
   const navigate = useNavigate();
+  const { user, setUser } = useUser();
+  const { logout } = useAuth();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -53,6 +57,7 @@ function ResponsiveAppBar() {
         navigate('/account');
         break;
       case 'Logout':
+        logout();
         navigate('/sign-in');
         break;
       default:
@@ -99,7 +104,7 @@ function ResponsiveAppBar() {
   }
 
   return (
-    <AppBar position="sticky" color='inherit' elevation={4}>  {/* change position to 'fixed' / 'sticky' to make the app bar fixed or perhaps sticky */}
+    <AppBar position="sticky" color='inherit' elevation={4}>
       <Container maxWidth="xxl">
         <Toolbar disableGutters >
           <BrushIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
@@ -120,7 +125,9 @@ function ResponsiveAppBar() {
           >
             Art Gallery
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+
+          {/* Search fields and button */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', flexShrink: 2 }}>
             <TextField
               id="search-title"
               size="small"
@@ -129,8 +136,7 @@ function ResponsiveAppBar() {
               type='search'
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              sx={{ marginRight: 3 }}
-
+              sx={{ marginRight: 2 }}
             />
             <TextField
               id="search-username"
@@ -140,10 +146,11 @@ function ResponsiveAppBar() {
               type='search'
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              sx={{ marginRight: 3 }}
+              sx={{ marginRight: 2 }}
             />
-            <Button variant="contained" onClick={handleSearch} >Search</Button>
+            <Button variant="contained" onClick={handleSearch} sx={{ mr: 2 }}>Search</Button>
           </Box>
+
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -180,6 +187,7 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
+
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
@@ -192,34 +200,25 @@ function ResponsiveAppBar() {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          {/* User information and avatar */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', flexShrink: 2 }}>
+            {user?.username && (
+              <>
+                <Typography variant="body2" color="text.secondary" sx={{ mr: 1, display: { xs: 'none', sm: 'block' } }}>
+                  Logged in as:
+                </Typography>
+                <Typography variant="body2" color="text.primary" sx={{ fontWeight: 'medium', mr: 2 }}>
+                  {user.username}
+                </Typography>
+              </>
+            )}
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Profile Pic" src="/alex.jpg" /> {/* change src to your profile pic */}
+                <Avatar sx={{ bgcolor: 'primary.main' }} aria-label='recipe' src='/static/images/avatar/2.jpg'>
+                  {user?.username ? user.username[0] : ''}
+                </Avatar>
               </IconButton>
             </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={() => handleMenuItemClick(setting)}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
           </Box>
         </Toolbar>
       </Container>
@@ -227,4 +226,5 @@ function ResponsiveAppBar() {
     </AppBar >
   );
 }
+
 export default ResponsiveAppBar;
