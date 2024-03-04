@@ -36,6 +36,8 @@ export default function DraggableDialog({ open, onClose, post, onSave }) {
         }
 
         const formData = new FormData();
+        const user = JSON.parse(localStorage.getItem('user'));
+        formData.append('username', user.username);
         formData.append('title', title);
         formData.append('description', description);
         formData.append('Image', file);
