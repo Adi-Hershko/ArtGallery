@@ -13,8 +13,8 @@ class PostController:
     def register_routes(self):
         self.router.get("/posts", tags=["Posts"])(self.get_posts)
         self.router.post("/upload-post", tags=["Posts"])(self.upload_post)
-        self.router.delete("/delete-post", tags=["Posts"])(self.delete_post)
-        self.router.put("/update-post", tags=["Posts"])(self.update_post)
+        self.router.delete("/delete-post/{postId}", tags=["Posts"])(self.delete_post)
+        self.router.put("/update-post/{postId}", tags=["Posts"])(self.update_post)
 
     async def get_posts(self, feed_reqs: PostFeedRequestModel = Depends(PostFeedRequestModel)):
         return await self.post_service.get_feed(feed_reqs)

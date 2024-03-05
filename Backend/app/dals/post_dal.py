@@ -60,7 +60,8 @@ class PostDal:
             if result is None:
                 logger.info(f"{module_name}.delete_post_in_db Post '{post_id}' not found.")
             try:
-                result.isActive = False
+                logger.info(f"{module_name}.delete_post_in_db Deleting post '{post_id}'...")                                
+                result.is_active = False
                 session.commit()
                 logger.info(f"{module_name}.delete_post_in_db Post '{post_id}' deleted successfully.")
             except Exception as e:
