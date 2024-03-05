@@ -32,8 +32,8 @@ class PostService:
         user = await self.user_dal.find_user(post.username)
         if user is None:
             raise UserNotFoundException("User not found.")        
-        if post.description is not None and post.description.strip() == "":
-            post.description = None          
+        if post.description is not None and post.description.strip() == '':
+            post.description = None
         (path_to_image, path_to_thumbnail) = await self.os_service.upload_image_and_thumbnail(
             post.Image, post.title, post.username
         )

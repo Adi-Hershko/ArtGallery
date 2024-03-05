@@ -36,27 +36,29 @@ export default function DraggableDialog({ open, onClose, post, onSave }) {
 
         const formData = new FormData();
         const user = JSON.parse(localStorage.getItem('user'));
-        formData.append('username', user.username);
-        formData.append('title', title);
-        formData.append('description', description);
+        // formData.append('username', user.username);
+        // formData.append('title', title);
+        // formData.append('description', description);
         formData.append('Image', file);
 
-        console.log('user', user.username);
-        console.log('title', title);
-        console.log('description', description);
+        const toastId = toast.loading('Uploading Post...');
 
         try {
             const base_url = import.meta.env.VITE_BASE_URL; // Make sure your base URL is correctly defined in your environment variables
-            const response = await axios.post(`${base_url}/upload-post?username=${user.username}&title=${title}&description=${description}`, formData);
+            const queryParams = `username=${encodeURIComponent(user.username)}&title=${encodeURIComponent(title)}${description ? `&description=${encodeURIComponent(description)}` : ''}`;
+            console.log('queryParams', queryParams);
+            const response = await axios.post(`${base_url}/upload-post?${queryParams}`, formData);
+            toast.dismiss(toastId);
+            toast.success('Post uploaded successfully.', { autoClose: 2000 });
             const newPost = response.data;
             if (onSave) {
                 onSave(newPost);
             }
-            onClose(); // Close the dialog on success
-            alert('Post uploaded successfully');
+            onClose(); // Close the dialog on success            
         } catch (error) {
             console.error('Error submitting the form:', error);
-            alert('Failed to upload the post.');
+            toast.dismiss(toastId);
+            toast.error('Error uploading post.');
         }
     };
 

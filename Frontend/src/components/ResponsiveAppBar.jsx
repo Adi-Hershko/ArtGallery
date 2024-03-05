@@ -244,7 +244,6 @@ function ResponsiveAppBar() {
           </Box>
         </Toolbar>
       </Container>
-      <CustomToast />
     </AppBar >
   );
 }
