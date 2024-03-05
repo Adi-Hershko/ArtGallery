@@ -19,6 +19,7 @@ class PostController:
     async def get_posts(self, feed_reqs: PostFeedRequestModel = Depends(PostFeedRequestModel)):
         return await self.post_service.get_feed(feed_reqs)
 
+    # TODO: figure out how to pass the image from the front to the back as body
     async def upload_post(self, post: PostUploadRequestModel = Depends(PostUploadRequestModel)):        
         return await self.post_service.create_post(post)        
 

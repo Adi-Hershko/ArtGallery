@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ResponsiveAppBar from "../components/ResponsiveAppBar";
 import CustomCard from "../components/CustomCard";
 import axios from "axios";
@@ -6,11 +6,14 @@ import Masonry from '@mui/lab/Masonry';
 import CustomAddButton from "../components/CustomAddButton";
 import CustomFeedContainer from "../components/CustomFeedContainer";
 import DraggableDialog from "../components/DraggableDialog";
+import { useSearch } from "../contexts/SearchContext";
+import { toast } from "react-toastify";
 
 function FeedPage() {
-    const [posts, setPosts] = React.useState([]);
-    const [dialogOpen, setDialogOpen] = React.useState(false);
-    const [currentPost, setCurrentPost] = React.useState(null); // For edit operation
+    const [posts, setPosts] = useState([]);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [currentPost, setCurrentPost] = useState(null); // For edit operation
+    const { searchCriteria, searchPerformed, setSearchPerformed } = useSearch();
     const local_s3_url = "https://art-gallery.s3.localhost.localstack.cloud:4566/"; // TODO: insert it into .env file
 
     const handleOpenDialog = (post = null) => {
@@ -22,18 +25,42 @@ function FeedPage() {
         setPosts([...posts, newPost]);
     };
 
-    React.useEffect(() => {
-        const base_url = import.meta.env.VITE_BASE_URL;
-        const api_url = `${base_url}/posts`;
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const baseURL = import.meta.env.VITE_BASE_URL;
+                const params = {};
 
-        axios.get(api_url)
-            .then((res) => {
-                setPosts(res.data);
-            })
-            .catch((error) => {
+                // Include search criteria in the request only if they are provided
+                if (searchCriteria.title) params.title = searchCriteria.title;
+                if (searchCriteria.username) params.username = searchCriteria.username;
+
+                const response = await axios.get(`${baseURL}/posts`, { params });
+                setPosts(response.data);
+
+                if (response.data.length > 0 && searchPerformed) {
+                    toast.success(`${response.data.length} posts found!`, {
+                        position: "bottom-left",
+                        autoClose: 2000,
+                    });
+                } else if (searchPerformed) {
+                    toast.warn('No posts found!', {
+                        position: "bottom-left",
+                        autoClose: 2000,
+                    });
+                }
+            } catch (error) {
                 console.error(error);
-            });
-    }, []);
+                toast.error('Failed to fetch posts', {
+                    position: "bottom-left",
+                    autoClose: 2000,
+                });
+            }
+        };
+
+        fetchPosts();
+        return () => setSearchPerformed(false);
+    }, [searchCriteria, setSearchPerformed, searchPerformed]);
 
     return (
         <CustomFeedContainer>
@@ -57,7 +84,7 @@ function FeedPage() {
                 <DraggableDialog
                     open={dialogOpen}
                     onClose={() => setDialogOpen(false)}
-                    post={currentPost} // Pass `null` for new post, or the post data for editing
+                    post={currentPost}
                     onSave={handleSavePost}
                 />
             )}

@@ -16,9 +16,9 @@ import BrushIcon from '@mui/icons-material/Brush';
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import CustomToast from './CustomToast';
 import { useUser } from '../contexts/UserContext';
 import { useAuth } from '../hooks/useAuth';
+import { useSearch } from '../contexts/SearchContext';
 
 
 const pages = []; // edit pages here
@@ -31,6 +31,8 @@ function ResponsiveAppBar() {
   const [username, setUsername] = React.useState('');
   const navigate = useNavigate();
   const { user, setUser } = useUser();
+  const { setSearchCriteria } = useSearch();
+  const { setSearchPerformed } = useSearch();
   const { logout } = useAuth();
 
   const handleOpenNavMenu = (event) => {
@@ -67,40 +69,9 @@ function ResponsiveAppBar() {
   };
 
   const handleSearch = async () => {
-    try {
-      toast.dismiss();
-      toast.info('Searching...', {
-        position: 'bottom-left',
-        autoClose: 2000,
-      });
-      const baseURL = import.meta.env.VITE_BASE_URL;
-      const response = await axios.get(`${baseURL}/posts`, {
-        params: { title, username },
-      });
-      console.log(response.data);
-      if (response.data.length !== 0) {
-        toast.dismiss();
-        toast.success('Posts found!', {
-          position: 'bottom-left',
-          autoClose: 2000,
-        });
-      }
-      else {
-        toast.dismiss();
-        toast.warning('No posts found!', {
-          position: 'bottom-left',
-          autoClose: 2000,
-        });
-      }
-    }
-    catch (error) {
-      toast.dismiss();
-      console.error(error);
-      toast.error('Failed to search posts', {
-        position: 'bottom-left',
-        autoClose: 2000,
-      });
-    }
+    setSearchPerformed(true);
+    setSearchCriteria({ title, username });
+    navigate('/feed');
   }
 
   return (

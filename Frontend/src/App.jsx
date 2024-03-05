@@ -5,11 +5,12 @@ import AuthPage from './pages/AuthPage';
 import FeedPage from './pages/FeedPage';
 import CustomToast from './components/CustomToast';
 import { UserProvider } from './contexts/UserContext';
+import { SearchProvider } from './contexts/SearchContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
-    <>
+    <SearchProvider>
       <UserProvider>
         <BrowserRouter>
           <Routes>
@@ -29,7 +30,7 @@ function App() {
         </BrowserRouter>
         <CustomToast />
       </UserProvider>
-    </>
+    </SearchProvider>
   );
 }
 
