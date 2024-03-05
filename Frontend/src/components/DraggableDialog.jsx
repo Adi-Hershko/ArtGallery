@@ -19,7 +19,6 @@ export default function DraggableDialog({ open, onClose, post, onSave }) {
     const [description, setDescription] = useState(post ? post.description : '');
     const [file, setFile] = useState(null);
 
-
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
     };
@@ -42,16 +41,19 @@ export default function DraggableDialog({ open, onClose, post, onSave }) {
         formData.append('description', description);
         formData.append('Image', file);
 
+        console.log('user', user.username);
+        console.log('title', title);
+        console.log('description', description);
+
         try {
             const base_url = import.meta.env.VITE_BASE_URL; // Make sure your base URL is correctly defined in your environment variables
-            await axios.post(`${base_url}/upload-post`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-
+            const response = await axios.post(`${base_url}/upload-post?username=${user.username}&title=${title}&description=${description}`, formData);
+            const newPost = response.data;
+            if (onSave) {
+                onSave(newPost);
+            }
             onClose(); // Close the dialog on success
-            if (onSave) onSave(); // Call onSave if provided, for any additional logic post-save
+            alert('Post uploaded successfully');
         } catch (error) {
             console.error('Error submitting the form:', error);
             alert('Failed to upload the post.');
@@ -89,7 +91,7 @@ export default function DraggableDialog({ open, onClose, post, onSave }) {
                         type="text"
                         fullWidth
                         variant="standard"
-                        value={description}
+                        value={description || ''}
                         onChange={(e) => setDescription(e.target.value)}
                     />
                     <input

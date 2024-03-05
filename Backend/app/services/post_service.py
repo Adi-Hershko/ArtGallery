@@ -12,7 +12,7 @@ class PostService:
         self.user_dal = user_dal
         self.os_service = os_service
 
-    async def get_feed(self, feed_reqs: PostFeedRequestModel):
+    async def get_feed(self, feed_reqs: PostFeedRequestModel) -> List[PostGetResponseModel]:
         not_nullables_conditions = {key: value for key, value in feed_reqs.convert_to_dict().items() if value is not None and value.strip() != ''}
         posts = await self.post_dal.get_all_posts(not_nullables_conditions)
 
@@ -28,23 +28,33 @@ class PostService:
             ), posts
         ))
 
-    async def create_post(self, post: PostUploadRequestModel):
+    async def create_post(self, post: PostUploadRequestModel) -> PostGetResponseModel:
         user = await self.user_dal.find_user(post.username)
         if user is None:
-            raise UserNotFoundException("User not found.")
-        else:
-            (path_to_image, path_to_thumbnail) = await self.os_service.upload_image_and_thumbnail(
-                post.Image, post.title, post.username
-            )
+            raise UserNotFoundException("User not found.")        
+        if post.description is not None and post.description.strip() == "":
+            post.description = None          
+        (path_to_image, path_to_thumbnail) = await self.os_service.upload_image_and_thumbnail(
+            post.Image, post.title, post.username
+        )
 
-            await self.post_dal.add_post(
-                Post(username=post.username,
-                     title=post.title,
-                     description=post.description,
-                     path_to_image=path_to_image,
-                     path_to_thumbnail=path_to_thumbnail
-                     )
-            )
+        new_post = await self.post_dal.add_post(
+            Post(username=post.username,
+                    title=post.title,
+                    description=post.description,
+                    path_to_image=path_to_image,
+                    path_to_thumbnail=path_to_thumbnail
+                    )
+        )
+        return PostGetResponseModel(
+            postId=new_post.post_id,
+            username=new_post.username,
+            title=new_post.title,
+            description=new_post.description,
+            path_to_image=new_post.path_to_image,
+            path_to_thumbnail=new_post.path_to_thumbnail,
+            insertionTime=new_post.insertion_time
+        )
 
     async def find_post_and_delete(self, post: PostIdSearchRequestModel):
         await self.post_dal.delete_post_in_db(post.postId)

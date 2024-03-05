@@ -19,9 +19,8 @@ class PostController:
     async def get_posts(self, feed_reqs: PostFeedRequestModel = Depends(PostFeedRequestModel)):
         return await self.post_service.get_feed(feed_reqs)
 
-    async def upload_post(self, post: PostUploadRequestModel = Depends(PostUploadRequestModel)):
-        await self.post_service.create_post(post)
-        return {"message": f"{post.title} has been uploaded."}
+    async def upload_post(self, post: PostUploadRequestModel = Depends(PostUploadRequestModel)):        
+        return await self.post_service.create_post(post)        
 
     async def delete_post(self, post: PostIdSearchRequestModel  = Depends(PostIdSearchRequestModel)):
         await self.post_service.find_post_and_delete(post)

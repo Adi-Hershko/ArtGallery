@@ -1,4 +1,4 @@
-from fastapi import UploadFile
+from fastapi import UploadFile, File, Form
 from pydantic import BaseModel, Field, constr
 from uuid import UUID
 from typing import Optional
@@ -6,14 +6,14 @@ from typing import Optional
 
 # Field(...) means that the field is required
 class PostUploadRequestModel(BaseModel):
-    username: str = Field(..., min_length=3, max_length=50)
-    title: str = Field(..., min_length=3, max_length=50)
-    description: Optional[constr(min_length=3, max_length=200)] = Field( # type: ignore
+    username: str = Form(..., min_length=3, max_length=50)
+    title: str = Form(..., min_length=3, max_length=50)
+    description: Optional[constr(min_length=3, max_length=200)] = Form( # type: ignore
         default=None, 
         description="The description of the post",
         example="This is an example description of a post."
     )
-    Image: UploadFile
+    Image: UploadFile = File(..., description="The image of the post")
 
     # An example of how to use this model
     class Config:

@@ -43,8 +43,11 @@ class PostDal:
             session.add(post)
             try:
                 session.commit()
+                session.refresh(post)
+                return post
             except Exception as e:
                 logger.error(f"{module_name}.add_post Failed to insert post Error: {e}")
+                session.rollback()
                 raise OperationError("Operation error.")
             else:
                 logger.info(f"{module_name}.add_post Post {post.title}, of {post.username} added successfully.")

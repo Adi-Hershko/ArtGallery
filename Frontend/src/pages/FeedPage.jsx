@@ -11,11 +11,15 @@ function FeedPage() {
     const [posts, setPosts] = React.useState([]);
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [currentPost, setCurrentPost] = React.useState(null); // For edit operation
-    const local_s3_url = "https://art-gallery.s3.localhost.localstack.cloud:4566/";
+    const local_s3_url = "https://art-gallery.s3.localhost.localstack.cloud:4566/"; // TODO: insert it into .env file
 
     const handleOpenDialog = (post = null) => {
         setCurrentPost(post); // `null` for new post, or the post data for editing
         setDialogOpen(true);
+    };
+
+    const handleSavePost = (newPost) => {
+        setPosts([...posts, newPost]);
     };
 
     React.useEffect(() => {
@@ -54,16 +58,7 @@ function FeedPage() {
                     open={dialogOpen}
                     onClose={() => setDialogOpen(false)}
                     post={currentPost} // Pass `null` for new post, or the post data for editing
-                    onSave={(newData) => {
-                        // Handle save operation (either create or update)
-                        setDialogOpen(false);
-                        if (currentPost) {
-                            // Update logic
-                        } else {
-                            // Add logic
-                            setPosts([...posts, newData]); // Example for add
-                        }
-                    }}
+                    onSave={handleSavePost}
                 />
             )}
         </CustomFeedContainer>
