@@ -60,5 +60,5 @@ class PostService:
         await self.post_dal.delete_post_in_db(post.postId)
 
     async def find_post_and_update(self, post: PostUpdateRequestModel):
-        not_nullables_updates = {key: value for key, value in post.convert_to_dict().items() if value is not None}
+        not_nullables_updates = {key: value for key, value in post.convert_to_dict().items() if value is not None and key != 'postId'}
         await self.post_dal.update_post_in_db(post.postId, not_nullables_updates)

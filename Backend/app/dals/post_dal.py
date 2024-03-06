@@ -70,9 +70,11 @@ class PostDal:
 
     async def update_post_in_db(self, post_id: UUID, updates: dict):
         logger.info(f"{module_name}.update_post_in_db Updating post...")
+        print(updates)
         with self.db_operations.get_session() as session:
             result = session.query(Post).filter(Post.post_id == post_id)
             try:
+                print(result)
                 result.update(updates)
                 session.commit()
             except Exception as e:
