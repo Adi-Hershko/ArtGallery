@@ -46,7 +46,6 @@ export default function DraggableDialog({ open, onClose, post, onSave }) {
         try {
             const base_url = import.meta.env.VITE_BASE_URL; // Make sure your base URL is correctly defined in your environment variables
             const queryParams = `username=${encodeURIComponent(user.username)}&title=${encodeURIComponent(title)}${description ? `&description=${encodeURIComponent(description)}` : ''}`;
-            console.log('queryParams', queryParams);
             const response = await axios.post(`${base_url}/upload-post?${queryParams}`, formData);
             toast.dismiss(toastId);
             toast.success('Post uploaded successfully.', { autoClose: 2000 });

@@ -10,7 +10,7 @@ export default function CustomFeedContainer({ children }) {
                 backgroundImage: `url('backgroundImage.webp')`,
                 backgroundSize: 'fill',
                 backgroundPosition: 'center',
-                backgroundAttachment: 'fixed',
+                backgroundAttachment: 'scroll',
             }}
         >
             {children}
