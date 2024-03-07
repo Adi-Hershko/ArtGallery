@@ -13,8 +13,7 @@ class PostGetResponseModel(BaseModel):
         description="The description of the post",
         example="This is an example description of a post."
     )
-    path_to_image: str = Field(..., min_length=3, max_length=300)
-    path_to_thumbnail: str = Field(..., min_length=3, max_length=300)
+    path_to_image: str = Field(..., min_length=3, max_length=300)    
     insertionTime: datetime = Field(..., description="The time the post was inserted.")
 
     class Config:

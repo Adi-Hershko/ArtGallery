@@ -54,7 +54,6 @@ async def test_post(session: Session, db_teardown, db_operations):
         title='Sample Title',
         description='Sample Description',
         path_to_image='/path/to/image.jpg',
-        path_to_thumbnail='/path/to/thumbnail.jpg',
         is_active=True)
 
     session.add(User(
@@ -76,8 +75,7 @@ async def test_post(session: Session, db_teardown, db_operations):
 
 def assert_post(post: Post, other: Post):
     assert post.username == other.username
-    assert post.title == other.title
-    assert post.path_to_thumbnail == other.path_to_thumbnail
+    assert post.title == other.title    
     assert post.insertion_time == other.insertion_time
     assert post.description == other.description
     assert post.is_active == other.is_active

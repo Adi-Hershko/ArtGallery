@@ -28,16 +28,16 @@ async def test_get_feed_with_empty_conditions():
                        title="title1", 
                        description="desc1", 
                        path_to_image="http://example.com/image1.jpg", 
-                       insertion_time=datetime.now(),  
-                       path_to_thumbnail="http://example.com/thumb1.jpg")
+                       insertion_time=datetime.now()
+                       )                       
     mock_post_2 = Mock(Post, 
                        post_id=uuid4(), 
                        username="user2", 
                        title="title2", 
                        description="desc2", 
                        path_to_image="http://example.com/image2.jpg", 
-                       insertion_time=datetime.now(), 
-                       path_to_thumbnail="http://example.com/thumb2.jpg")
+                       insertion_time=datetime.now()
+                       )
 
     mock_posts = [mock_post_1, mock_post_2]
 
@@ -61,21 +61,21 @@ async def test_get_feed_with_emtpy_string_conditions():
     mock_post_dal.get_all_posts = AsyncMock()
 
     mock_post_1 = Mock(Post, 
-                       post_id=uuid4(), 
-                       username="user1", 
-                       title="title1", 
-                       description="desc1", 
-                       path_to_image="http://example.com/image1.jpg", 
-                       insertion_time=datetime.now(), 
-                       path_to_thumbnail="http://example.com/thumb1.jpg")
+        post_id=uuid4(), 
+        username="user1", 
+        title="title1", 
+        description="desc1", 
+        path_to_image="http://example.com/image1.jpg", 
+        insertion_time=datetime.now()
+    )
     mock_post_2 = Mock(Post, 
-                       post_id=uuid4(), 
-                       username="user2", 
-                       title="title2", 
-                       description="desc2", 
-                       path_to_image="http://example.com/image2.jpg", 
-                       insertion_time=datetime.now(), 
-                       path_to_thumbnail="http://example.com/thumb2.jpg")
+        post_id=uuid4(), 
+        username="user2", 
+        title="title2", 
+        description="desc2", 
+        path_to_image="http://example.com/image2.jpg", 
+        insertion_time=datetime.now()
+    )
 
     mock_posts = [mock_post_1, mock_post_2]
 
@@ -102,21 +102,21 @@ async def test_get_feed_with_non_empty_conditions():
 
     # Mock posts, including both those that meet the feed requirements and those that do not
     mock_filtered_post = Mock(Post, 
-                              post_id=uuid4(), 
-                              username="user1", 
-                              title="Filtered Post Title", 
-                              description="Filtered post description", 
-                              path_to_image="http://example.com/filtered_image.jpg", 
-                              insertion_time=datetime.now(), 
-                              path_to_thumbnail="http://example.com/filtered_thumb.jpg")
+            post_id=uuid4(), 
+            username="user1", 
+            title="Filtered Post Title", 
+            description="Filtered post description", 
+            path_to_image="http://example.com/filtered_image.jpg", 
+            insertion_time=datetime.now()
+    )
     mock_unfiltered_post = Mock(Post, 
-                                post_id=uuid4(), 
-                                username="user2", 
-                                title="Unfiltered Post Title", 
-                                description="Unfiltered post description", 
-                                path_to_image="http://example.com/unfiltered_image.jpg", 
-                                insertion_time=datetime.now(), 
-                                path_to_thumbnail="http://example.com/unfiltered_thumb.jpg")
+        post_id=uuid4(), 
+        username="user2", 
+        title="Unfiltered Post Title", 
+        description="Unfiltered post description", 
+        path_to_image="http://example.com/unfiltered_image.jpg", 
+        insertion_time=datetime.now()
+    )
 
     # Return both filtered and unfiltered posts from the DAL
     mock_posts = [mock_filtered_post, mock_unfiltered_post]
@@ -145,7 +145,7 @@ async def test_create_post():
     mock_user_dal.find_user = AsyncMock(side_effect=lambda username: mock_user if username == "abc" else None)
     mock_post_dal.add_post = AsyncMock()
     mock_os_service.upload_image_and_thumbnail = AsyncMock(
-        side_effect=lambda file, title, username: ("path", "thumbnail/path")
+        side_effect=lambda file, title, username: "path"
         if username == "abc" and title == "title" and file == mock_file else None
     )
 
