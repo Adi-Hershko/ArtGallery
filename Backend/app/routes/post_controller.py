@@ -20,13 +20,13 @@ class PostController:
         return await self.post_service.get_feed(feed_reqs)
 
     # TODO: figure out how to pass the image from the front to the back as body
-    async def upload_post(self, post: PostUploadRequestModel = Depends(PostUploadRequestModel)):        
+    async def upload_post(self, post: PostUploadRequestModel = Depends(PostUploadRequestModel)) -> PostGetResponseModel:        
         return await self.post_service.create_post(post)        
 
-    async def delete_post(self, post: PostIdSearchRequestModel  = Depends(PostIdSearchRequestModel)):
+    async def delete_post(self, post: PostIdSearchRequestModel  = Depends(PostIdSearchRequestModel)) -> dict:
         await self.post_service.find_post_and_delete(post)
         return {"message": f"Post {post.postId} has been deleted."}
 
-    async def update_post(self, post: PostUpdateRequestModel = Depends(PostUpdateRequestModel)):
-        await self.post_service.find_post_and_update(post)
-        return {"message": f"Post {post.postId} has been updated."}
+    async def update_post(self, post: PostUpdateRequestModel = Depends(PostUpdateRequestModel)) -> PostGetResponseModel:
+        return await self.post_service.find_post_and_update(post)
+        

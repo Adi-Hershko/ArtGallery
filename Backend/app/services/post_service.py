@@ -59,6 +59,15 @@ class PostService:
     async def find_post_and_delete(self, post: PostIdSearchRequestModel):
         await self.post_dal.delete_post_in_db(post.postId)
 
-    async def find_post_and_update(self, post: PostUpdateRequestModel):
+    async def find_post_and_update(self, post: PostUpdateRequestModel) -> PostGetResponseModel:
         not_nullables_updates = {key: value for key, value in post.convert_to_dict().items() if value is not None and key != 'postId'}
-        await self.post_dal.update_post_in_db(post.postId, not_nullables_updates)
+        updated_post = await self.post_dal.update_post_in_db(post.postId, not_nullables_updates)
+        return PostGetResponseModel(
+            postId=updated_post.post_id,
+            username=updated_post.username,
+            title=updated_post.title,
+            description=updated_post.description,
+            path_to_image=updated_post.path_to_image,
+            path_to_thumbnail=updated_post.path_to_thumbnail,
+            insertionTime=updated_post.insertion_time
+        )

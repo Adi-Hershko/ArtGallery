@@ -23,15 +23,30 @@ function FeedPage() {
         setDialogOpen(true);
     };
 
-    const handleSavePost = (newPost) => {
-        setPosts([...posts, newPost]);
+    const handleSavePost = (savedPost) => {
+        if (isEditMode) {
+            // Update the posts array with the updated post
+            setPosts(posts.map(post => post.postId === savedPost.postId ? savedPost : post));
+            // Update the currentPost if the image has changed
+            if (savedPost.path_to_image !== currentPost.path_to_image) {
+                setCurrentPost(prevPost => ({ ...prevPost, path_to_image: savedPost.path_to_image }));
+            }
+        } else {
+            // Add the newly saved post to the posts array
+            setPosts(prevPosts => [...prevPosts, savedPost]);
+        }
     };
+
 
     const handleEditPost = (postId) => {
         const postToEdit = posts.find((post) => post.postId === postId);
-        setCurrentPost(postToEdit);
-        setIsEditMode(true);
-        setDialogOpen(true);
+        if (postToEdit) {
+            setCurrentPost(postToEdit);
+            setIsEditMode(true);
+            setDialogOpen(true);
+        } else {
+            console.error("Post not found for edit:", postId);
+        }
     };
 
     const handleDeletePost = async (postId) => {
@@ -94,19 +109,21 @@ function FeedPage() {
             <ResponsiveAppBar />
             <Masonry columns={4} spacing={3} sx={{ marginX: 'auto', paddingTop: '10px' }}>
                 {posts.map((post) => (
-                    <CustomCard
-                        key={post.postId}
-                        postId={post.postId}
-                        username={post.username}
-                        title={post.title}
-                        desc={post.description}
-                        imgSrc={local_s3_url + post.path_to_image}
-                        date={post.insertionTime}
-                        sx={{ backgroundColor: '#E0E0E0' }}
-                        onClick={() => handleOpenDialog(post)}
-                        onDelete={handleDeletePost}
-                        onEdit={handleEditPost}
-                    />
+                    post && post.postId ? ( // Ensure post and postId exist
+                        <CustomCard
+                            key={post.postId}
+                            postId={post.postId}
+                            username={post.username}
+                            title={post.title}
+                            desc={post.description}
+                            imgSrc={local_s3_url + post.path_to_image}
+                            date={post.insertionTime}
+                            sx={{ backgroundColor: '#E0E0E0' }}
+                            onClick={() => handleOpenDialog(post)}
+                            onDelete={handleDeletePost}
+                            onEdit={handleEditPost}
+                        />
+                    ) : null
                 ))}
             </Masonry>
             <CustomAddButton onClick={() => handleOpenDialog()} />
@@ -116,10 +133,12 @@ function FeedPage() {
                     onClose={() => {
                         setDialogOpen(false);
                         setIsEditMode(false);
+                        setCurrentPost(null);
                     }}
                     post={currentPost}
                     onSave={handleSavePost}
                     isEditMode={isEditMode}
+                    localS3Url={local_s3_url}
                 />
             )}
         </CustomFeedContainer>

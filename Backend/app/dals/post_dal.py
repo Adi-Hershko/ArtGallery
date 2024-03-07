@@ -68,18 +68,23 @@ class PostDal:
                 logger.error(f"{module_name}.delete_post_in_db Error: {e}")
                 raise OperationError("Operation error.")
 
-    async def update_post_in_db(self, post_id: UUID, updates: dict):
-        logger.info(f"{module_name}.update_post_in_db Updating post...")
-        print(updates)
+    async def update_post_in_db(self, post_id: UUID, updates: dict) -> Post:
+        logger.info(f"{module_name}.update_post_in_db Updating post...")        
         with self.db_operations.get_session() as session:
             result = session.query(Post).filter(Post.post_id == post_id)
-            try:
-                print(result)
-                result.update(updates)
-                session.commit()
+            try:                
+                result.update(updates)                
+                session.commit()           
+                session.refresh(result.first())
+                updated_post = result.first()
+                if updated_post is None:
+                    logger.info(f"{module_name}.update_post_in_db Post '{post_id}' not found.")
+                    raise OperationError("Operation error.")     
             except Exception as e:
                 logger.error(f"{module_name}.update_post_in_db Error: {e}")
+                session.rollback()
                 raise OperationError("Operation error.")
             else:
                 logger.info(f"{module_name}.update_post_in_db Post '{post_id}' updated successfully.")
+                return updated_post
 
