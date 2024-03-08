@@ -37,20 +37,20 @@ class PostDal:
                 logger.info(f"{module_name}.get_all_posts Rows fetched: {len(posts)}")
                 return posts
 
-    async def add_post(self, post: Post):
+    async def add_post(self, post: Post) -> Post:
         logger.info(f"{module_name}.add_post Inserting post {post.title}, of {post.username}")
         with self.db_operations.get_session() as session:
             session.add(post)
             try:
                 session.commit()
-                session.refresh(post)
-                return post
+                session.refresh(post)                
             except Exception as e:
                 logger.error(f"{module_name}.add_post Failed to insert post Error: {e}")
                 session.rollback()
                 raise OperationError("Operation error.")
             else:
                 logger.info(f"{module_name}.add_post Post {post.title}, of {post.username} added successfully.")
+                return post
 
     async def delete_post_in_db(self, post_id: UUID):
         logger.info(f"{module_name}.delete_post_in_db Deleting post {post_id}")

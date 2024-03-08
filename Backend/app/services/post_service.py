@@ -23,8 +23,7 @@ class PostService:
                 title=post.title,
                 description=post.description,
                 path_to_image=post.path_to_image,
-                insertionTime=post.insertion_time,
-                path_to_thumbnail=post.path_to_thumbnail
+                insertionTime=post.insertion_time,                
             ), posts
         ))
 
@@ -33,17 +32,14 @@ class PostService:
         if user is None:
             raise UserNotFoundException("User not found.")        
         if post.description is not None and post.description.strip() == '':
-            post.description = None
-        (path_to_image, path_to_thumbnail) = await self.os_service.upload_image_and_thumbnail(
-            post.Image, post.title, post.username
-        )
+            post.description = None        
+        path_to_image = await self.os_service.upload_image(post.Image, post.title, post.username)
 
         new_post = await self.post_dal.add_post(
             Post(username=post.username,
                     title=post.title,
                     description=post.description,
-                    path_to_image=path_to_image,
-                    path_to_thumbnail=path_to_thumbnail
+                    path_to_image=path_to_image,                    
                     )
         )
         return PostGetResponseModel(
@@ -52,7 +48,6 @@ class PostService:
             title=new_post.title,
             description=new_post.description,
             path_to_image=new_post.path_to_image,
-            path_to_thumbnail=new_post.path_to_thumbnail,
             insertionTime=new_post.insertion_time
         )
 
@@ -67,7 +62,6 @@ class PostService:
             username=updated_post.username,
             title=updated_post.title,
             description=updated_post.description,
-            path_to_image=updated_post.path_to_image,
-            path_to_thumbnail=updated_post.path_to_thumbnail,
+            path_to_image=updated_post.path_to_image,            
             insertionTime=updated_post.insertion_time
         )
