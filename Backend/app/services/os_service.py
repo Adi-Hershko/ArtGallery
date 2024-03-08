@@ -16,7 +16,7 @@ class OsService:
     def __init__(self, session: BaseClient):
         self.session = session
 
-    async def upload_image(self, file: UploadFile, title: str, username: str) -> tuple:
+    async def upload_image(self, file: UploadFile, title: str, username: str) -> str:
         logger.info(f"{module_name}.upload_image Start uploading images: {title}, of {username}")
         try:
             file_content = file.file.read()

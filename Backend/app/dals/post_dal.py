@@ -37,7 +37,7 @@ class PostDal:
                 logger.info(f"{module_name}.get_all_posts Rows fetched: {len(posts)}")
                 return posts
 
-    async def add_post(self, post: Post):
+    async def add_post(self, post: Post) -> Post:
         logger.info(f"{module_name}.add_post Inserting post {post.title}, of {post.username}")
         with self.db_operations.get_session() as session:
             session.add(post)
