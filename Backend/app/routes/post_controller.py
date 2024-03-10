@@ -16,7 +16,7 @@ class PostController:
         self.router.delete("/delete-post/{postId}", tags=["Posts"])(self.delete_post)
         self.router.put("/update-post/{postId}", tags=["Posts"])(self.update_post)
 
-    async def get_posts(self, feed_reqs: PostFeedRequestModel = Depends(PostFeedRequestModel)):
+    async def get_posts(self, feed_reqs: PostFeedRequestModel = Depends(PostFeedRequestModel)) -> List[PostGetResponseModel]:
         return await self.post_service.get_feed(feed_reqs)
 
     # TODO: figure out how to pass the image from the front to the back as body

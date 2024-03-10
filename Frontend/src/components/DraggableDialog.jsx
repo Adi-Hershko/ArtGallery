@@ -1,5 +1,3 @@
-// DraggableDialog.jsx
-
 import React, { useEffect, useState } from 'react';
 import Draggable from 'react-draggable';
 import { Dialog, DialogContent, TextField, Button, DialogTitle, Box, IconButton, Paper, CircularProgress } from '@mui/material';
@@ -18,6 +16,7 @@ function PaperComponent(props) {
 export default function DraggableDialog({ open, onClose, post, onSave, isEditMode = false, localS3Url }) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [pathToImage, setPathToImage] = useState('');
     const [imagePreview, setImagePreview] = useState('');
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -26,7 +25,8 @@ export default function DraggableDialog({ open, onClose, post, onSave, isEditMod
         if (isEditMode && post) {
             setTitle(post.title);
             setDescription(post.description || '');
-            setImagePreview(`${localS3Url}${post.path_to_image}`);
+            setPathToImage(post.path_to_image);
+            setImagePreview(`${localS3Url}${post.path_to_image}?${new Date().getTime()}`);
         } else {
             resetForm();
         }
@@ -35,6 +35,7 @@ export default function DraggableDialog({ open, onClose, post, onSave, isEditMod
     const resetForm = () => {
         setTitle('');
         setDescription('');
+        setPathToImage('');
         setImagePreview('');
         setFile(null);
     };
@@ -56,40 +57,47 @@ export default function DraggableDialog({ open, onClose, post, onSave, isEditMod
         e.preventDefault();
         setLoading(true);
 
+        if (!isEditMode && !file) {
+            toast.error('Please select an image to upload.', { autoClose: 3000, closeOnClick: true });
+            setLoading(false);
+            return;
+        }
+
         const formData = new FormData();
+        let hasFile = false;
         if (file) {
             formData.append('Image', file);
+            hasFile = true;
         }
         // Base URL should be defined in your environment variables or directly here
         const baseURL = import.meta.env.VITE_BASE_URL;
         const user = JSON.parse(localStorage.getItem('user'));
 
         let url = `${baseURL}/${isEditMode ? `update-post/${post.postId}` : 'upload-post'}`;
-        let queryParams = `?title=${encodeURIComponent(title)}`;
-        if (description) queryParams += `&description=${encodeURIComponent(description)}`;
-        if (!isEditMode) queryParams += `&username=${encodeURIComponent(user.username)}`;
+        let queryParams = `?username=${encodeURIComponent(user.username)}`;
+        queryParams += isEditMode ? `&path_to_image=${encodeURIComponent(pathToImage)}` : '';
+        queryParams += title ? `&title=${encodeURIComponent(title)}` : '';
+        queryParams += description ? `&description=${encodeURIComponent(description)}` : '';
 
-        const config = {
+        const config = hasFile ? {
             headers: { 'Content-Type': 'multipart/form-data' },
-        };
+        } : {};
 
         try {
             const toastId = toast.loading(`${isEditMode ? 'Updating' : 'Uploading'} post...`, { autoClose: false, closeOnClick: false });
-            const response = isEditMode ? await axios.put(`${url}${queryParams}`, formData, config) : await axios.post(`${url}${queryParams}`, formData, config);
+            const response = await axios({
+                method: isEditMode ? 'put' : 'post',
+                url: `${url}${queryParams}`,
+                data: hasFile ? formData : null, // Only send formData if there's a file
+                ...config,
+            });
             toast.dismiss(toastId);
-            toast.success(`Post ${isEditMode ? 'updated' : 'uploaded'} successfully!`, { autoClose: 5000, closeOnClick: true });
-
-            if (!isEditMode) {
-                onSave(response.data); // Assuming response.data is the new post
-            } else {
-                // In edit mode, we need to manually update the post object because we might not get the updated post from the backend
-                const updatedPost = { ...post, title, description };
-                onSave(updatedPost);
-                setImagePreview(file ? URL.createObjectURL(file) : `${localS3Url}${response.data.path_to_image}`);
-            }
+            toast.success(`Post ${isEditMode ? 'updated' : 'uploaded'} successfully!`, { autoClose: 3000, closeOnClick: true });
+            onSave(response.data);
+            setImagePreview(file ? URL.createObjectURL(file) : `${localS3Url}${response.data.path_to_image}`);
         } catch (error) {
             console.error(`Error ${isEditMode ? 'updating' : 'uploading'} post:`, error);
-            toast.error(`Failed to ${isEditMode ? 'update' : 'upload'} post.`, { autoClose: 5000, closeOnClick: true });
+            toast.error(`Failed to ${isEditMode ? 'update' : 'upload'} post.`, { autoClose: 3000, closeOnClick: true });
         } finally {
             setLoading(false);
             onClose();

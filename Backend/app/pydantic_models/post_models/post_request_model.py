@@ -63,13 +63,15 @@ class PostFeedRequestModel(BaseModel):
 
 class PostUpdateRequestModel(BaseModel):
     postId: UUID = Field(..., description="The id of the post")
+    path_to_image: str = Field(..., description="The path to the image of the post")
+    username: str = Field(..., description="The username of the user")
     title: Optional[str] = Field(None, min_length=3, max_length=50)
     description: Optional[constr(min_length=3, max_length=200)] = Field( # type: ignore
         default=None, 
         description="The description of the post",
         example="This is an example description of a post."
     )
-    path_to_image: Optional[str] = Field(None, min_length=3, max_length=300)
+    Image: Optional[UploadFile] = File(None, description="The image of the post")
 
     # An example of how to use this model
     class Config:
@@ -78,8 +80,7 @@ class PostUpdateRequestModel(BaseModel):
             "example": {
                 "postId": "123e4567-e89b-12d3-a456-426614174000",
                 "title": "My new post",
-                "description": "This is a new post",
-                "path_to_image": "https://www.example.com/image.jpg"
+                "description": "This is a new post",                
             }
         }
 
@@ -88,5 +89,5 @@ class PostUpdateRequestModel(BaseModel):
             "postId": self.postId,
             "title": self.title,
             "description": self.description,
-            "path_to_image": self.path_to_image,
+            "Image": self.Image
         }

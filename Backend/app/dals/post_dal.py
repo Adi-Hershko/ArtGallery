@@ -87,4 +87,14 @@ class PostDal:
             else:
                 logger.info(f"{module_name}.update_post_in_db Post '{post_id}' updated successfully.")
                 return updated_post
-
+            
+    async def find_post(self, post_id: UUID) -> Post:
+        logger.info(f"{module_name}.find_post Searching for post {post_id}")
+        with self.db_operations.get_session() as session:
+            result = session.query(Post).filter(Post.post_id == post_id).first()
+            if result is None:
+                logger.info(f"{module_name}.find_post Post '{post_id}' not found.")
+                raise OperationError("Operation error.")
+            else:
+                logger.info(f"{module_name}.find_post Post '{post_id}' found.")
+                return result
