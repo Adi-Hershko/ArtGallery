@@ -56,11 +56,13 @@ class PostService:
 
     async def find_post_and_update(self, post: PostUpdateRequestModel) -> PostGetResponseModel:        
         updates = {}
+        if await self.user_dal.find_user(post.username) is None:
+            raise UserNotFoundException("User not found.")
         if post.title is not None and post.title.strip() != '':
             updates['title'] = post.title
         if post.description is not None and post.description.strip() != '':
             updates['description'] = post.description        
-        if post.Image is not None:            
+        if post.Image is not None:                        
             updates['path_to_image'] = await self.os_service.update_image(post.Image, post.path_to_image, post.username)
         updated_post = await self.post_dal.update_post_in_db(post.postId, updates)
         return PostGetResponseModel(

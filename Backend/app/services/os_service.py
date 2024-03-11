@@ -45,7 +45,6 @@ class OsService:
         
     async def update_image(self, file: UploadFile, path_to_image: str, username: str) -> str:
         logger.info(f"{module_name}.update_image Start updating image of: {username}, at path: {path_to_image}")
-
         await self.delete_image(path_to_image)
         
         try:            
