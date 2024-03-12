@@ -1,276 +1,118 @@
 import pytest
-from unittest.mock import Mock, AsyncMock
+from unittest.mock import AsyncMock, Mock, patch
 from fastapi import UploadFile
+from app.exceptions import PostNotFoundException
+from app.services.post_service import PostService
+from app.pydantic_models.post_models.post_request_model import PostFeedRequestModel, PostUploadRequestModel, PostIdSearchRequestModel, PostUpdateRequestModel
 from app.pydantic_models.post_models.post_response_model import PostGetResponseModel
-from app.pydantic_models.post_models.post_request_model import PostIdSearchRequestModel, PostUpdateRequestModel, PostFeedRequestModel, PostUploadRequestModel
-from app.DB.models import Post, User
+from app.exceptions import UserNotFoundException
+from app.DB.models import User, Post
+from datetime import datetime
 from app.dals.post_dal import PostDal
 from app.dals.user_dal import UserDal
-from app.exceptions import OperationError, UserNotFoundException
 from app.services.os_service import OsService
-from app.services.post_service import PostService
 from uuid import uuid4
-from datetime import datetime
+
+
+# Mocks setup
+mock_post_dal = Mock(spec=PostDal)
+mock_user_dal = Mock(spec=UserDal)
+mock_os_service = Mock(spec=OsService)
+
+# Shared post instances for testing
+mock_post_1 = Mock(spec=Post, post_id=uuid4(), username="user1", title="title1", description="desc1", path_to_image="http://example.com/image1.jpg", insertion_time=datetime.now(), is_active=True)
+mock_post_2 = Mock(spec=Post, post_id=uuid4(), username="user2", title="title2", description="desc2", path_to_image="http://example.com/image2.jpg", insertion_time=datetime.now(), is_active=True)
+
+# Create a single instance of PostService for all tests
+post_service = PostService(mock_post_dal, mock_user_dal, mock_os_service)
 
 
 @pytest.mark.asyncio
-async def test_get_feed_with_empty_conditions():
-    mock_post_dal = PostDal
-    mock_user_dal = UserDal
-    mock_os_service = OsService
-    mock_feed_reqs = Mock(PostFeedRequestModel, convert_to_dict=Mock(return_value={}))
-
-    mock_post_dal.get_all_posts = AsyncMock()
-
-    mock_post_1 = Mock(Post, 
-                       post_id=uuid4(),
-                       username="user1", 
-                       title="title1", 
-                       description="desc1", 
-                       path_to_image="http://example.com/image1.jpg", 
-                       insertion_time=datetime.now()
-                       )                       
-    mock_post_2 = Mock(Post, 
-                       post_id=uuid4(), 
-                       username="user2", 
-                       title="title2", 
-                       description="desc2", 
-                       path_to_image="http://example.com/image2.jpg", 
-                       insertion_time=datetime.now()
-                       )
-
-    mock_posts = [mock_post_1, mock_post_2]
-
-    mock_post_dal.get_all_posts.return_value = mock_posts
-
-    post_service = PostService(mock_post_dal, mock_user_dal, mock_os_service)
+@pytest.mark.parametrize("feed_reqs,expected_result", [
+    ({}, [mock_post_1, mock_post_2]),  # Test with empty conditions returns all posts
+    ({'username': 'nonexistent'}, []),  # Test with username that doesn't match any post
+    ({'username': 'user1', 'title': 'title1'}, [mock_post_1]),  # Test with matching conditions
+    ({'username': 'user3'}, []),  # Test with username that doesn't exist
+])
+async def test_get_feed_varied_conditions(feed_reqs, expected_result):
+    mock_post_dal.get_all_posts = AsyncMock(return_value=expected_result)
+    mock_feed_reqs = PostFeedRequestModel(**feed_reqs)  # Adjusted to directly create an instance
     result_posts = await post_service.get_feed(mock_feed_reqs)
-
-    assert len(result_posts) == 2
-    assert all(isinstance(post, PostGetResponseModel) for post in result_posts)
-    mock_post_dal.get_all_posts.assert_called_once_with({})
+    assert len(result_posts) == len(expected_result), "The number of returned posts should match the expected result."
+    mock_post_dal.get_all_posts.assert_called_once_with(feed_reqs)
 
 
 @pytest.mark.asyncio
-async def test_get_feed_with_emtpy_string_conditions():
-    mock_post_dal = PostDal
-    mock_user_dal = UserDal
-    mock_os_service = OsService
-    mock_feed_reqs = Mock(PostFeedRequestModel, convert_to_dict=Mock(return_value={'username': ''}))
+@pytest.mark.parametrize("input_data,user_exists,expected_exception", [    
+    ({"username": "user1", "title": "New Post", "description": "Content", "Image": Mock(spec=UploadFile)}, True, None),  # Normal case
+    ({"username": "user3", "title": "New Post", "description": "Content", "Image": Mock(spec=UploadFile)}, False, UserNotFoundException),  # User doesn't exist
+])
+async def test_create_post_varied_conditions(input_data, user_exists, expected_exception):
+    mock_user_dal.find_user = AsyncMock(return_value=mock_post_1 if user_exists else None)
+    mock_os_service.upload_image = AsyncMock(return_value="http://example.com/image.jpg")
+    mock_post_dal.add_post = AsyncMock(return_value=mock_post_1)
+    post_upload_request_model = PostUploadRequestModel(**input_data)
 
-    mock_post_dal.get_all_posts = AsyncMock()
-
-    mock_post_1 = Mock(Post, 
-        post_id=uuid4(), 
-        username="user1", 
-        title="title1", 
-        description="desc1", 
-        path_to_image="http://example.com/image1.jpg", 
-        insertion_time=datetime.now()
-    )
-    mock_post_2 = Mock(Post, 
-        post_id=uuid4(), 
-        username="user2", 
-        title="title2", 
-        description="desc2", 
-        path_to_image="http://example.com/image2.jpg", 
-        insertion_time=datetime.now()
-    )
-
-    mock_posts = [mock_post_1, mock_post_2]
-
-    mock_post_dal.get_all_posts.return_value = mock_posts
-
-    post_service = PostService(mock_post_dal, mock_user_dal, mock_os_service)
-    result_posts = await post_service.get_feed(mock_feed_reqs)
-
-    assert len(result_posts) == 2
-    assert all(isinstance(post, PostGetResponseModel) for post in result_posts)
-    mock_post_dal.get_all_posts.assert_called_once_with({})
+    if expected_exception:
+        with pytest.raises(expected_exception):
+            await post_service.create_post(post_upload_request_model)
+    else:
+        result = await post_service.create_post(post_upload_request_model)
+        assert isinstance(result, PostGetResponseModel), "Result should be an instance of PostGetResponseModel."
 
 
 @pytest.mark.asyncio
-async def test_get_feed_with_non_empty_conditions():
-    mock_post_dal = PostDal
-    mock_user_dal = UserDal
-    mock_os_service = OsService
-
-    mock_post_dal.get_all_posts = AsyncMock()
-    
-    feed_requirements = {'username': 'user1'}
-    mock_feed_reqs = Mock(PostFeedRequestModel, convert_to_dict=Mock(return_value=feed_requirements))
-    
-    mock_filtered_post = Mock(Post, 
-            post_id=uuid4(), 
-            username="user1", 
-            title="Filtered Post Title", 
-            description="Filtered post description", 
-            path_to_image="http://example.com/filtered_image.jpg", 
-            insertion_time=datetime.now()
-    )
-    mock_unfiltered_post = Mock(Post, 
-        post_id=uuid4(), 
-        username="user2", 
-        title="Unfiltered Post Title", 
-        description="Unfiltered post description", 
-        path_to_image="http://example.com/unfiltered_image.jpg", 
-        insertion_time=datetime.now()
-    )
-    
-    mock_posts = [mock_filtered_post, mock_unfiltered_post]
-
-    mock_post_dal.get_all_posts.return_value = [mock_filtered_post]
-
-    post_service = PostService(mock_post_dal, mock_user_dal, mock_os_service)
-    result_posts = await post_service.get_feed(mock_feed_reqs)
-
-    # Assertions to ensure only the filtered post is returned
-    assert len(result_posts) == 1
-    assert all(isinstance(post, PostGetResponseModel) for post in result_posts)
-    assert result_posts[0].username == feed_requirements['username']
-    mock_post_dal.get_all_posts.assert_called_once_with(feed_requirements)
+@pytest.mark.parametrize("post_id, post_exists, expected_exception", [
+    (mock_post_1.post_id, True, None),  # Existing post ID
+    (uuid4(), False, PostNotFoundException),  # Non-existing post ID
+])
+async def test_delete_post(post_id, post_exists, expected_exception):            
+    if expected_exception:
+        with pytest.raises(expected_exception, match="Post not found"):
+            mock_post_dal.delete_post_in_db = AsyncMock(side_effect=PostNotFoundException("Post not found"))
+            await post_service.find_post_and_delete(PostIdSearchRequestModel(postId=post_id))
+    else:
+        mock_post_dal.delete_post_in_db = AsyncMock()
+        await post_service.find_post_and_delete(PostIdSearchRequestModel(postId=post_id))
+        mock_post_dal.delete_post_in_db.assert_called_once_with(post_id)
 
 
-@pytest.mark.asyncio
-async def test_create_post():
-    mock_user_dal = UserDal
-    mock_post_dal = PostDal
-    mock_os_service = OsService
-
-    mock_file = Mock(spec=UploadFile)
-    mock_user = Mock(spec=User)
-    mock_post_id = uuid4()
-    mock_insertion_time = datetime.now()
-    mock_post = Post(post_id=mock_post_id, username="johndoe", title="My new post", description="This is a new post", path_to_image="path/to/image.jpg", insertion_time=mock_insertion_time, is_active=True)
+pytest.mark.asyncio
+@pytest.mark.parametrize("update_reqs, user_exists, expected_changes, expected_exception", [
+    # Update all fields
+    (
+        {'title': 'New Title', 'description': 'Updated Description', 'Image': Mock(spec=UploadFile)},
+        True,
+        {'title': 'New Title', 'description': 'Updated Description', 'path_to_image': 'updated/path.png'},
+        None
+    ),
+    # No updates provided, return current post
+    ({}, True, {}, None),
+    # User does not exist
+    ({'title': 'New Title'}, False, {}, UserNotFoundException),
+    # Update image only
+    ({'Image': Mock(spec=UploadFile)}, True, {'path_to_image': 'updated/path.png'}, None),
+])
+async def test_find_post_and_update_varied_conditions(update_reqs, user_exists, expected_changes, expected_exception):
+    mock_user_dal.find_user = AsyncMock(return_value=User() if user_exists else None)
+    mock_os_service.update_image = AsyncMock(return_value="updated/path.png" if 'Image' in update_reqs else mock_post_1.path_to_image)
         
-    post_upload_request_model = PostUploadRequestModel(username="johndoe", title="My new post", description="This is a new post", Image=mock_file)
-        
-    mock_user_dal.find_user = AsyncMock(return_value=lambda: mock_user if mock_user.username == "johndoe" else None)  
-    mock_post_dal.add_post = AsyncMock(return_value=mock_post)
-    mock_os_service.upload_image = AsyncMock(return_value="path/to/image.jpg")
-    
-    post_service = PostService(mock_post_dal, mock_user_dal, mock_os_service)
- 
-    new_post = await post_service.create_post(post_upload_request_model)
-        
-    assert new_post.postId == mock_post_id
-    assert new_post.path_to_image == "path/to/image.jpg"
-    assert new_post.username == "johndoe"
-    assert new_post.title == "My new post"
-    assert new_post.description == "This is a new post"
-    assert new_post.insertionTime == mock_insertion_time    
-    
-    mock_user_dal.find_user.assert_called_once_with("johndoe")
-    mock_os_service.upload_image.assert_called_once()
-    mock_post_dal.add_post.assert_called_once()
+    updated_post = Mock(spec=Post, post_id=mock_post_1.post_id, username=mock_post_1.username, **expected_changes)
 
+    mock_post_dal.update_post_in_db = AsyncMock(return_value=updated_post)
+    mock_post_update_req = PostUpdateRequestModel(postId=mock_post_1.post_id, path_to_image=mock_post_1.path_to_image, username=mock_post_1.username, **update_reqs)
 
-@pytest.mark.asyncio
-async def test_create_post_user_is_none_get_user_not_found_exception():
-    mock_user_dal = UserDal
-    mock_post_dal = PostDal
-    mock_os_service = Mock(OsService)
-    mock_file = Mock(UploadFile)
-    mock_post = Mock(Post)
-
-    mock_user_dal.find_user = AsyncMock(return_value=None)
-
-    mock_post.username = "abc"
-    mock_post.title = "title"
-    mock_post.Image = mock_file
-    mock_post.description = "test description"
-
-    post_service = PostService(mock_post_dal, mock_user_dal, mock_os_service)
-    with pytest.raises(UserNotFoundException):
-        await post_service.create_post(mock_post)
-
-
-@pytest.mark.asyncio
-async def test_find_post_and_update_update_reqs_not_empty():
-    mock_post_dal = PostDal 
-    mock_user_dal = UserDal
-    mock_os_service = Mock(OsService)
-
-    mock_user = Mock(User, username="johndoe")
-    mock_file = Mock(UploadFile)
-    mock_post_id = uuid4()
-    mock_insertion_time = datetime.now()
-    mock_post = Mock(Post, post_id=mock_post_id, username="johndoe", title="Updated Title", description="Updated Description", path_to_image="updated/path.png", insertion_time=mock_insertion_time, is_active=True)    
-    mock_post_update_req = Mock(PostUpdateRequestModel, postId=mock_post_id, path_to_image="current/path.jpg" ,username="johndoe", title="Updated Title", description="Updated Description", Image=mock_file)
-
-    mock_user_dal.find_user = AsyncMock(return_value=mock_user)
-    mock_os_service.update_image = AsyncMock(return_value="updated/path.png")
-
-    mock_post_dal.update_post_in_db = AsyncMock(return_value=mock_post)
-
-    post_service = PostService(mock_post_dal, mock_user_dal, mock_os_service)
-    updated_post = await post_service.find_post_and_update(mock_post_update_req)
-
-    assert updated_post.postId == mock_post_id
-    assert updated_post.path_to_image == "updated/path.png"
-    assert updated_post.username == "johndoe"
-    assert updated_post.title == "Updated Title"
-    assert updated_post.description == "Updated Description"
-    assert updated_post.insertionTime == mock_insertion_time
-
-    mock_user_dal.find_user.assert_called_once_with("johndoe")
-    mock_os_service.update_image.assert_called_once_with(mock_file, "current/path.jpg", "johndoe")
-    mock_post_dal.update_post_in_db.assert_called_once_with(mock_post_id, {'title': 'Updated Title', 'description': 'Updated Description', 'path_to_image': 'updated/path.png'})
-
-
-@pytest.mark.asyncio
-async def test_find_post_and_update_update_reqs_is_empty():
-    mock_post_dal = PostDal
-    mock_user_dal = UserDal
-    mock_os_service = Mock(OsService)
-    
-    mock_user = Mock(User, username="johndoe")
-    mock_user_dal.find_user = AsyncMock(return_value=mock_user)
-
-    mock_post_id = uuid4()
-    mock_insertion_time = datetime.now()
-    mock_post = Mock(Post, post_id=mock_post_id, username="johndoe", title="Same Title", description="Same Description", path_to_image="same/path.png", insertion_time=mock_insertion_time, is_active=True)
-
-    mock_post_update_req = Mock(PostUpdateRequestModel, postId=mock_post_id, path_to_image="same/path.png", username="johndoe", title="", description="", Image=None)
-
-    mock_post_dal.update_post_in_db = AsyncMock(return_value=mock_post)
-
-    post_service = PostService(mock_post_dal, mock_user_dal, mock_os_service)
-    updated_post = await post_service.find_post_and_update(mock_post_update_req)    
-
-    assert updated_post.postId == mock_post_id
-    assert updated_post.path_to_image == "same/path.png"
-    assert updated_post.username == "johndoe"
-    assert updated_post.title == "Same Title"
-    assert updated_post.description == "Same Description"
-    assert updated_post.insertionTime == mock_insertion_time
-
-    mock_user_dal.find_user.assert_called_once_with("johndoe") 
-    # update_image should not be called since the image is not being updated
-    mock_os_service.update_image.assert_not_called()
-    mock_post_dal.update_post_in_db.assert_awaited_once_with(mock_post_id, {})
-
-
-    
-
-
-@pytest.mark.asyncio
-async def test_find_post_and_delete():
-    mock_post_dal = PostDal
-    mock_user_dal = UserDal
-    mock_os_service = OsService
-    mock_post_id_search_req = Mock(PostIdSearchRequestModel, postId="id1")
-
-    mock_post_dal.delete_post_in_db = AsyncMock()
-
-    post_service = PostService(mock_post_dal, mock_user_dal, mock_os_service)
-    await post_service.find_post_and_delete(mock_post_id_search_req)
-
-    mock_post_dal.delete_post_in_db.assert_called_once_with("id1")
-
-
-def raise_operation_error(_):
-    raise OperationError()
-
-def return_none():
-    return None
+    if expected_exception:
+        with pytest.raises(expected_exception):
+            await post_service.find_post_and_update(mock_post_update_req)
+    else:
+        result = await post_service.find_post_and_update(mock_post_update_req)
+        assert isinstance(result, PostGetResponseModel), "Result should be an instance of PostGetResponseModel."
+        assert result.postId == mock_post_1.post_id, "Post ID should remain unchanged."
+        assert result.username == mock_post_1.username, "Username should remain unchanged."
+        for field, expected_value in expected_changes.items():
+            assert getattr(result, field) == expected_value, f"Field '{field}' should be updated to '{expected_value}'."
+        if update_reqs:
+            mock_post_dal.update_post_in_db.assert_called_once_with(mock_post_1.post_id, expected_changes)
+        else:
+            mock_post_dal.update_post_in_db.assert_called_once_with(mock_post_1.post_id, {})

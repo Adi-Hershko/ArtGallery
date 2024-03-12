@@ -1,7 +1,7 @@
 from typing import List
 
 from kink import inject
-from app.exceptions import OperationError
+from app.exceptions import OperationError, PostNotFoundException
 from app.DB.db_operations import DatabaseOperations
 from app.DB.models import Post
 from app.dals.queries_statement.query_params import posts_statement_by_name
@@ -52,13 +52,14 @@ class PostDal:
                 logger.info(f"{module_name}.add_post Post {post.title}, of {post.username} added successfully.")
                 return post
 
-    async def delete_post_in_db(self, post_id: UUID):
+    async def delete_post_in_db(self, post_id: UUID) -> None:
         logger.info(f"{module_name}.delete_post_in_db Deleting post {post_id}")
 
         with self.db_operations.get_session() as session:
             result = session.query(Post).filter(Post.post_id == post_id).first()
             if result is None:
                 logger.info(f"{module_name}.delete_post_in_db Post '{post_id}' not found.")
+                raise PostNotFoundException("Post not found.")
             try:
                 logger.info(f"{module_name}.delete_post_in_db Deleting post '{post_id}'...")                                
                 result.is_active = False

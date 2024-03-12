@@ -6,16 +6,15 @@ from typing import Optional
 
 # Field(...) means that the field is required
 class PostUploadRequestModel(BaseModel):
-    username: str = Form(..., min_length=3, max_length=50)
-    title: str = Form(..., min_length=3, max_length=50)
-    description: Optional[constr(min_length=3, max_length=200)] = Form( # type: ignore
+    username: str = Form(...)
+    title: str = Form(...)
+    description: Optional[str] = Form( 
         default=None, 
         description="The description of the post",
         example="This is an example description of a post."
     )
     Image: UploadFile = File(..., description="The image of the post")
 
-    # An example of how to use this model
     class Config:
         schema_extra = {
             "example": {
@@ -30,7 +29,6 @@ class PostUploadRequestModel(BaseModel):
 class PostIdSearchRequestModel(BaseModel):
     postId: UUID = Field(..., description="The id of the post")
 
-    # An example of how to use this model
     class Config:
         orm_mode = True
         schema_extra = {
@@ -43,8 +41,7 @@ class PostIdSearchRequestModel(BaseModel):
 class PostFeedRequestModel(BaseModel):
     username: Optional[str] = Field(None, description="The username of the user")
     title: Optional[str] = Field(None, description="The title of the post")
-
-    # An example of how to use this model
+    
     class Config:
         orm_mode = True
         schema_extra = {
@@ -65,15 +62,14 @@ class PostUpdateRequestModel(BaseModel):
     postId: UUID = Field(..., description="The id of the post")
     path_to_image: str = Field(..., description="The path to the image of the post")
     username: str = Field(..., description="The username of the user")
-    title: Optional[str] = Field(None, min_length=3, max_length=50)
-    description: Optional[constr(min_length=3, max_length=200)] = Field( # type: ignore
+    title: Optional[str] = Field(None)
+    description: Optional[str] = Field( 
         default=None, 
         description="The description of the post",
         example="This is an example description of a post."
     )
     Image: Optional[UploadFile] = File(None, description="The image of the post")
 
-    # An example of how to use this model
     class Config:
         orm_mode = True
         schema_extra = {
@@ -84,10 +80,10 @@ class PostUpdateRequestModel(BaseModel):
             }
         }
 
-    def convert_to_dict(self):
-        return {
-            "postId": self.postId,
-            "title": self.title,
-            "description": self.description,
-            "Image": self.Image
-        }
+    def create_updates(self):
+        updates = {}
+        if self.title is not None and self.title.strip() != '':
+            updates['title'] = self.title
+        if self.description is not None and self.description.strip() != '':
+            updates['description'] = self.description        
+        return updates

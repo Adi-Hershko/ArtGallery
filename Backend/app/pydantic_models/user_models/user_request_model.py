@@ -21,8 +21,7 @@ class UserBaseRequestModel(BaseModel):
         if len(v) > 50:
             raise UsernameTooLong('Username must be at most 50 characters')
         return v
-    
-    # An example of how to use this model
+        
     class Config:
         schema_extra = {
             "example": {
@@ -37,5 +36,3 @@ class UserInternalRequestModel(BaseModel):
     password: bytes # This is the hashed password
 
 
-class UserSearchRequestModel(BaseModel):
-    username: str

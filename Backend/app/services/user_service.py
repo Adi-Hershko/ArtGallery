@@ -1,8 +1,6 @@
 import bcrypt
 import inspect
-
 from kink import inject
-
 from app.dals.user_dal import UserDal
 from app.exceptions import UserNotFoundException, PasswordNotMatchException, OperationError, UserAlreadyExist
 from app.DB.models import User

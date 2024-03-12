@@ -6,14 +6,14 @@ from uuid import UUID
 
 class PostGetResponseModel(BaseModel):
     postId: UUID = Field(..., description="The id of the post")
-    username: str = Field(..., min_length=3, max_length=50)
-    title: str = Field(..., min_length=3, max_length=50)
-    description: Optional[constr(min_length=3, max_length=200)] = Field( # type: ignore
+    username: str = Field(...)
+    title: str = Field(...)
+    description: Optional[str] = Field(
         default=None, 
         description="The description of the post",
         example="This is an example description of a post."
     )
-    path_to_image: str = Field(..., min_length=3, max_length=300)    
+    path_to_image: str = Field(...)    
     insertionTime: datetime = Field(..., description="The time the post was inserted.")
 
     class Config:

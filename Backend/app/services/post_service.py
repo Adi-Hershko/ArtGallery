@@ -51,17 +51,14 @@ class PostService:
             insertionTime=new_post.insertion_time
         )
 
-    async def find_post_and_delete(self, post: PostIdSearchRequestModel):
+    async def find_post_and_delete(self, post: PostIdSearchRequestModel) -> None:        
         await self.post_dal.delete_post_in_db(post.postId)
 
+
     async def find_post_and_update(self, post: PostUpdateRequestModel) -> PostGetResponseModel:        
-        updates = {}
         if await self.user_dal.find_user(post.username) is None:
             raise UserNotFoundException("User not found.")
-        if post.title is not None and post.title.strip() != '':
-            updates['title'] = post.title
-        if post.description is not None and post.description.strip() != '':
-            updates['description'] = post.description        
+        updates = post.create_updates()    
         if post.Image is not None:                        
             updates['path_to_image'] = await self.os_service.update_image(post.Image, post.path_to_image, post.username)
         updated_post = await self.post_dal.update_post_in_db(post.postId, updates)
