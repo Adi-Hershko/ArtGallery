@@ -1,0 +1,10 @@
+DB_USERNAME = "postgres"
+DB_PASSWORD = "123456"
+DB_HOST = "localhost"
+DB_PORT = 5432
+DB_NAME = "test"
+AWS_ACCESS_KEY = "test"
+AWS_SECRET_ACCESS_KEY = "test"
+BUCKET_NAME = "art-gallery"
+S3_LOCAL_URL = "http://localhost:4566"
+ENV = "dev"
