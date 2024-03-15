@@ -48,7 +48,7 @@ def db_operations(session) -> DatabaseOperations:
 
 
 @pytest.mark.asyncio
-async def test_post(session: Session, db_teardown, db_operations):
+async def test_get_all_posts_without_filter_should_return_all_posts(session: Session, db_teardown, db_operations):
     post = Post(
         username='sample_username',
         title='Sample Title',
@@ -71,6 +71,107 @@ async def test_post(session: Session, db_teardown, db_operations):
 
     assert len(result_posts) == 1
     assert_post(post, result_posts[0])
+
+
+@pytest.mark.asyncio
+async def test_get_all_posts_inactive_post_should_return_empty_list(session: Session, db_teardown, db_operations):
+    post = Post(
+        username='sample_username',
+        title='Sample Title',
+        description='Sample Description',
+        path_to_image='/path/to/image.jpg',
+        is_active=False)
+
+    session.add(User(
+        username="sample_username",
+        password=b"test",
+        is_active=False
+    ))
+
+    session.commit()
+    session.add(post)
+    session.commit()
+
+    post_dal = PostDal(db_operations)
+    result_posts = await post_dal.get_all_posts({})
+
+    assert len(result_posts) == 0
+
+
+@pytest.mark.asyncio
+async def test_get_all_posts_with_username_filter_should_return_one_post(session: Session, db_teardown, db_operations):
+    session.add(User(
+        username="sample_username",
+        password=b"test",
+        is_active=False
+    ))
+
+    session.add(User(
+        username="sample_username_2",
+        password=b"test",
+        is_active=False
+    ))
+
+    session.commit()
+
+    filtered_post = Post(
+        username='sample_username',
+        title='Sample Title',
+        description='Sample Description',
+        path_to_image='/path/to/image.jpg',
+        is_active=True)
+
+    session.add(Post(
+        username='sample_username_2',
+        title='Sample Title',
+        description='Sample Description',
+        path_to_image='/path/to/image.jpg',
+        is_active=True))
+
+    session.add(filtered_post)
+    session.commit()
+
+    post_dal = PostDal(db_operations)
+
+    result_posts = await post_dal.get_all_posts({'username': 'sample_username'})
+
+    assert len(result_posts) == 1
+    assert_post(filtered_post, result_posts[0])
+
+
+@pytest.mark.asyncio
+async def test_get_all_posts_with_title_filter_should_return_one_post(session: Session, db_teardown, db_operations):
+    session.add(User(
+        username="sample_username",
+        password=b"test",
+        is_active=False
+    ))
+
+    session.commit()
+
+    filtered_post = Post(
+        username='sample_username',
+        title='Sample Title',
+        description='Sample Description',
+        path_to_image='/path/to/image.jpg',
+        is_active=True)
+
+    session.add(Post(
+        username='sample_username',
+        title='Another title',
+        description='Sample Description',
+        path_to_image='/path/to/image.jpg',
+        is_active=True))
+
+    session.add(filtered_post)
+    session.commit()
+
+    post_dal = PostDal(db_operations)
+
+    result_posts = await post_dal.get_all_posts({'title': 'Sample Title'})
+
+    assert len(result_posts) == 1
+    assert_post(filtered_post, result_posts[0])
 
 
 def assert_post(post: Post, other: Post):
