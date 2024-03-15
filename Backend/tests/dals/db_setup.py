@@ -3,6 +3,7 @@ from sqlalchemy_utils import database_exists, create_database
 from app.DB.models import Base
 from app.config.config import db_config
 from app.application import logger
+from tests.dals import db_config
 
 
 def create_database_and_tables(username, password, host, port, db_name):
@@ -33,5 +34,5 @@ def create_database_and_tables(username, password, host, port, db_name):
 
 
 def create_db():
-    create_database_and_tables(db_config.username, db_config.password, db_config.host, db_config.port, db_config.database)
+    create_database_and_tables(env.DB_NAME, env.DB_PASSWORD, env.DB_HOST, env.DB_PORT, env.DB_NAME)
 
