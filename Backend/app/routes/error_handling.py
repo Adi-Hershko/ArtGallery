@@ -45,11 +45,6 @@ async def operation_error_exception_handler(request, exc: OperationError):
         content={"message": "Operation error"}
     )
 
-async def missing_auth_exception_handler(request, exc: MissingAuthException):
-    return JSONResponse(
-        status_code=401,
-        content={"message": "Unauthorized"}
-    )
 
 async def user_already_exist_exception_handler(request, exc: UserAlreadyExist):
     return JSONResponse(
