@@ -1,4 +1,5 @@
 import app.bootstrap as bootstrap
+from app.routes.middlewares.auth_middleware import AccessTokenCreator, AuthMiddleware
 
 bootstrap.bootstrap_di()
 
@@ -7,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routes.user_controller import UserController
 from app.routes.post_controller import PostController
 from app.routes.error_handling import *
-from app.config.config import origins
+from app.config.config import origins, auth_config
 from app import logger
 
 app = FastAPI()
@@ -18,6 +19,13 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
+)
+
+app.add_middleware(
+    AuthMiddleware,
+    secret_key=auth_config.secret_key,
+    algorithm=auth_config.algorithm,
+    exclude_paths=["/sign-in", "/sign-up"]
 )
 
 app.add_exception_handler(UserNotFoundException, user_not_found_exception_handler)

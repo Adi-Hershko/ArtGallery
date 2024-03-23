@@ -1,4 +1,6 @@
 from fastapi.responses import JSONResponse
+from jose import jwt
+
 from app.exceptions import *
 
 async def default_exception_handler(request, exc):
@@ -14,6 +16,12 @@ async def user_not_found_exception_handler(request, exc: UserNotFoundException):
     )
 
 async def password_not_match_exception_handler(request, exc: PasswordNotMatchException):
+    return JSONResponse(
+        status_code=401,
+        content={"message": "Unauthorized"}
+    )
+
+async def invalid_auth_handler(request, exc: jwt.JWTError):
     return JSONResponse(
         status_code=401,
         content={"message": "Unauthorized"}
@@ -35,6 +43,12 @@ async def operation_error_exception_handler(request, exc: OperationError):
     return JSONResponse(
         status_code=500,
         content={"message": "Operation error"}
+    )
+
+async def missing_auth_exception_handler(request, exc: MissingAuthException):
+    return JSONResponse(
+        status_code=401,
+        content={"message": "Unauthorized"}
     )
 
 async def user_already_exist_exception_handler(request, exc: UserAlreadyExist):

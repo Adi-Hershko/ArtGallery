@@ -2,15 +2,17 @@ from fastapi import APIRouter
 from kink import inject
 
 from app.services.user_service import UserService
-from ..pydantic_models.user_models.user_request_model import UserBaseRequestModel
-from ..pydantic_models.user_models.user_response_model import UserBaseResponseModel
+from app.routes.middlewares.auth_middleware import AccessTokenCreator
+from app.pydantic_models.user_models.user_request_model import UserBaseRequestModel
+from app.pydantic_models.user_models.user_response_model import UserBaseResponseModel
 
 
 @inject
 class UserController:
-    def __init__(self, user_service: UserService):
+    def __init__(self, user_service: UserService, access_token_creator: AccessTokenCreator):
         self.router = APIRouter()
         self.user_service = user_service
+        self.access_token_creator = access_token_creator
         self.register_routes()
 
     def register_routes(self):
@@ -23,9 +25,14 @@ class UserController:
 
     async def sign_up(self, user: UserBaseRequestModel) -> dict:
         await self.user_service.create_user(user)
-        return {"message": f"{user.username} has been signed up.", "username": user.username}
+        access_key = self.access_token_creator.create_access_token(username=user.username)
+        return {"message": f"{user.username} has been signed up.", "username": user.username, "access_key": access_key}
 
     async def sign_in(self, user: UserBaseRequestModel) -> UserBaseResponseModel:
-        return await self.user_service.validate_user(user)
+        user_response = await self.user_service.validate_user(user)
+        if user_response is not None:
+            user_response.access_key = self.access_token_creator.create_access_token(username=user_response.username)
+
+        return user_response
 
     

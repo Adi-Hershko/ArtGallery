@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from app.config.models import DbConfig, S3Config
+from app.config.models import DbConfig, S3Config, AuthConfig
 import os
 
 load_dotenv()
@@ -13,7 +13,7 @@ db_config = DbConfig(
 )
 
 env = os.getenv("ENV", "dev")
-origins = os.getenv("ORIGINS", ["*"] if env == "dev" else [])
+origins = os.getenv("ORIGINS", ["http://localhost:5173"] if env == "dev" else [])
 
 s3_config = S3Config(
     os.getenv("AWS_ACCESS_KEY"),
@@ -25,3 +25,9 @@ if env == 'dev':
     s3_config.endpoint_url = os.getenv("S3_LOCAL_URL")
 
 THUMBNAILS_SIZE = (100, 100)
+
+auth_config = AuthConfig(
+        secret_key=os.getenv("AUTH_SECRET_KEY", "dev"),
+        algo=os.getenv("AUTH_ALGORITH", "HS256")
+)
+
