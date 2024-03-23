@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from kink import inject
 
+from app.routes import routes_path
 from app.services.user_service import UserService
 from app.routes.middlewares.auth_middleware import AccessTokenCreator
 from app.pydantic_models.user_models.user_request_model import UserBaseRequestModel
@@ -16,9 +17,9 @@ class UserController:
         self.register_routes()
 
     def register_routes(self):
-        self.router.get("/", tags=["Root"])(self.root)
-        self.router.post("/sign-up", tags=["Users"])(self.sign_up)
-        self.router.post("/sign-in", tags=["Users"])(self.sign_in)
+        self.router.get(routes_path.ROOT, tags=["Root"])(self.root)
+        self.router.post(routes_path.SIGN_UP, tags=["Users"])(self.sign_up)
+        self.router.post(routes_path.SIGN_IN, tags=["Users"])(self.sign_in)
 
     async def root(self) -> dict:
         return {"message": "Welcome to Art Gallery!"}

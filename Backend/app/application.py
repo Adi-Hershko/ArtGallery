@@ -1,4 +1,5 @@
 import app.bootstrap as bootstrap
+from app.routes import routes_path
 from app.routes.middlewares.auth_middleware import AuthMiddleware
 
 bootstrap.bootstrap_di()
@@ -25,7 +26,7 @@ app.add_middleware(
     AuthMiddleware,
     secret_key=auth_config.secret_key,
     algorithm=auth_config.algorithm,
-    exclude_paths=["/sign-in", "/sign-up"]
+    exclude_paths=[routes_path.SIGN_UP, routes_path.SIGN_IN]
 )
 
 app.add_exception_handler(UserNotFoundException, user_not_found_exception_handler)

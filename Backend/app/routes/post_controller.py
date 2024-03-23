@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from app.services.post_service import *
 from app.pydantic_models.post_models.post_request_model import *
-
+from app.routes import routes_path
 
 @inject
 class PostController:
@@ -11,10 +11,10 @@ class PostController:
         self.register_routes()
 
     def register_routes(self):
-        self.router.get("/posts", tags=["Posts"])(self.get_posts)
-        self.router.post("/upload-post", tags=["Posts"])(self.upload_post)
-        self.router.delete("/delete-post/{postId}", tags=["Posts"])(self.delete_post)
-        self.router.put("/update-post/{postId}", tags=["Posts"])(self.update_post)
+        self.router.get(routes_path.GET_POSTS, tags=["Posts"])(self.get_posts)
+        self.router.post(routes_path.UPLOAD_POST, tags=["Posts"])(self.upload_post)
+        self.router.delete(routes_path.DELETE_POST, tags=["Posts"])(self.delete_post)
+        self.router.put(routes_path.UPDATE_POST, tags=["Posts"])(self.update_post)
 
     async def get_posts(self, feed_reqs: PostFeedRequestModel = Depends(PostFeedRequestModel)) -> List[PostGetResponseModel]:
         return await self.post_service.get_feed(feed_reqs)
