@@ -3,7 +3,7 @@ from typing import Optional
 
 import jose
 from fastapi import Request
-from jose import jwt, JWSError
+from jose import jwt
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 

@@ -1,5 +1,5 @@
 import app.bootstrap as bootstrap
-from app.routes.middlewares.auth_middleware import AccessTokenCreator, AuthMiddleware
+from app.routes.middlewares.auth_middleware import AuthMiddleware
 
 bootstrap.bootstrap_di()
 
