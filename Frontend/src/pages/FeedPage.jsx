@@ -8,6 +8,7 @@ import CustomFeedContainer from "../components/CustomFeedContainer";
 import DraggableDialog from "../components/DraggableDialog";
 import { useSearch } from "../contexts/SearchContext";
 import { toast } from "react-toastify";
+import { headers } from "../utils/authCookie";
 
 function FeedPage() {
     const [posts, setPosts] = useState([]);
@@ -52,7 +53,7 @@ function FeedPage() {
     const handleDeletePost = async (postId) => {
         try {
             const baseURL = import.meta.env.VITE_BASE_URL;
-            await axios.delete(`${baseURL}/delete-post/${postId}`);
+            await axios.delete(`${baseURL}/delete-post/${postId}`, {headers, withCredentials: true});
             const updatedPosts = posts.filter(post => post.postId !== postId);
             setPosts(updatedPosts);
             toast.success('Post deleted successfully!', {
@@ -77,7 +78,7 @@ function FeedPage() {
                 if (searchCriteria.title) params.title = searchCriteria.title;
                 if (searchCriteria.username) params.username = searchCriteria.username;
 
-                const response = await axios.get(`${baseURL}/posts`, { params });
+                const response = await axios.get(`${baseURL}/posts`, { params, headers, withCredentials: true });
                 setPosts(response.data);
 
                 if (response.data.length > 0 && searchPerformed) {

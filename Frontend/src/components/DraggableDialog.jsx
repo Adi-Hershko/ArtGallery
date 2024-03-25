@@ -4,6 +4,7 @@ import { Dialog, DialogContent, TextField, Button, DialogTitle, Box, IconButton,
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import CloseIcon from '@mui/icons-material/Close';
+import { headers as authHeaders  } from "../utils/authCookie";
 
 function PaperComponent(props) {
     return (
@@ -80,7 +81,7 @@ export default function DraggableDialog({ open, onClose, post, onSave, isEditMod
         queryParams += description ? `&description=${encodeURIComponent(description)}` : '';
 
         const config = hasFile ? {
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: { 'Content-Type': 'multipart/form-data', ...authHeaders },
         } : {};
 
         try {
@@ -89,6 +90,7 @@ export default function DraggableDialog({ open, onClose, post, onSave, isEditMod
                 method: isEditMode ? 'put' : 'post',
                 url: `${url}${queryParams}`,
                 data: hasFile ? formData : null, // Only send formData if there's a file
+                withCredentials: true,
                 ...config,
             });
             toast.dismiss(toastId);

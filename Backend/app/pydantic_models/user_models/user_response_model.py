@@ -1,8 +1,10 @@
 from pydantic import BaseModel
 
+
 class UserBaseResponseModel(BaseModel):
     username: str
     is_active: bool
+    access_key: str = ""
 
     # An example of how to use this model, for documentation purposes
     class Config:

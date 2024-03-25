@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import AuthFormView from './AuthFormView'; // Using the unified view component
 import { useUser } from '../contexts/UserContext';
 import { useAuth } from '../hooks/useAuth';
+import { set } from "../utils/authCookie";
 
 function AuthForm({ mode }) {
   const { setUser } = useUser();
@@ -34,6 +35,8 @@ function AuthForm({ mode }) {
 
         const res = await axios.post(api_url, formFields);
         const message = mode === 'signup' ? res.data.message : `Welcome, ${res.data.username}`;
+        const token = res.data.access_key
+        set(token)
 
         toast.success(message, {
           position: 'bottom-left',

@@ -26,3 +26,12 @@ class S3Config:
         self.access_key = access_key
         self.secret_access_key = secret_access_key
         self.bucket_name = bucket_name
+
+
+class AuthConfig:
+    secret_key: str
+    algorithm: str
+
+    def __init__(self, secret_key, algo):
+        self.secret_key = secret_key
+        self.algorithm = algo
