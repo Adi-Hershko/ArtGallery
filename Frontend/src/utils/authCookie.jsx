@@ -5,5 +5,6 @@ export const headers = {
 }
 
 export const set = (value) => {
-    Cookies.set("token", value)
+    Cookies.set('token', value)
+    Cookies.set('token', value, { domain: '127.0.0.1' });
 };

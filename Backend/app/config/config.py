@@ -13,7 +13,7 @@ db_config = DbConfig(
 )
 
 env = os.getenv("ENV", "dev")
-origins = os.getenv("ORIGINS", ["http://localhost:5173"] if env == "dev" else [])
+origins = os.getenv("ORIGINS", ["http://localhost:5173", "127.0.0.1:5173"] if env == "dev" else [])
 
 s3_config = S3Config(
     os.getenv("AWS_ACCESS_KEY"),
