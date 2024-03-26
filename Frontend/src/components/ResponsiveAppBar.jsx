@@ -14,15 +14,13 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import BrushIcon from '@mui/icons-material/Brush';
 import TextField from '@mui/material/TextField';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 import { useUser } from '../contexts/UserContext';
 import { useAuth } from '../hooks/useAuth';
 import { useSearch } from '../contexts/SearchContext';
 
 
 const pages = []; // edit pages here
-const settings = ['Profile', 'Account', 'Logout']; // edit dropdown menu here
+const settings = ['Logout']; // edit dropdown menu here
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
