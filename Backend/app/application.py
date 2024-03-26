@@ -22,6 +22,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+
 app.add_middleware(
     AuthMiddleware,
     secret_key=auth_config.secret_key,
