@@ -1,0 +1,16 @@
+psycopg2
+uvicorn
+fastapi
+bcrypt
+starlette
+sqlalchemy
+kink
+sqlalchemy_utils
+python-dotenv
+python-multipart
+boto3
+Pillow
+pytest
+localstack
+awscli-local
+pytest-asyncio

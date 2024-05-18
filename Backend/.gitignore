@@ -1,0 +1,32 @@
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+
+# Ignore virtual environment folders
+venv/
+.env
+.vscode/
+volume/
+# Ignore generated files and directories
+__pycache__/
+app/__pycache__
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+*.log
+db.sqlite3  # Ignore SQLite database files if used
+*.__pycache__/
+app/__pycache__/
+
+
+# Ignore FastAPI auto-generated files
+api/.mypy_cache/
+api/__pycache__/
+api/main.py  # Ignore FastAPI main.py if used as the main module
+
+# Optional: Ignore IDE-specific files (customize this if needed)
+.vscode/
+.idea/
